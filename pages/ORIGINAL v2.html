@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ORIGINAL v2 — Figma replica (1440 Desktop)</title>
+    <style>
+      /* ==================================================================
+     Replica of Figma node 150:1514 "ORIGINAL v2"
+     Project Dikya — file pBEFZHOeLXhB2XAfQ7YeYZ
+     Frame 1440 x 1688.4 · Section pt48/px64/pb16 · Container 1312, gap 8
+     ================================================================== */
+      :root {
+        --navy: #04142d; /* color/azure/10   — Black Pearl      */
+        --muted: #6b7280; /* color/grey/46    — Pale Sky         */
+        --line: #d7dce5; /* color/azure/87   — Geyser           */
+        --line-grey: #c7cad1; /* color/grey/80    — Ghost            */
+        --bg: #f4f6fb; /* page background                     */
+        --card: #ffffff; /* color/white/solid                   */
+        --stage: #eef1f7; /* color/grey/95-2  — Catskill White   */
+        --r1: #0033b8; /* color/azure/36   — Intl Klein Blue  */
+        --r1bg: #e8edfc; /* color/grey/95    — Selago           */
+        --hero: #0a1f3d; /* color/azure/14   — Downriver        */
+        --hero-sub: #b9c2d6; /* color/casper                        */
+        --shape: #dce3f5; /* color/grey/91    — Link Water       */
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #f4f6fb;
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--navy);
+      }
+      .page {
+        width: 1440px;
+        margin: 0 auto;
+        background: var(--bg);
+      }
+
+      /* ---------- Section 150:1521 / Container 150:1528 ---------- */
+      .section {
+        padding: 48px 64px 16px 64px;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: 100%;
+      }
+
+      /* ---------- card chrome — "Background+Border" ---------- */
+      .test {
+        width: 100%;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      /* ---------- token chips ---------- */
+      .taglist {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: center;
+        gap: 8px;
+        width: 100%;
+      }
+      .taglist.tight {
+        /* cards 4-7: gap 6px, no wrap, top aligned */
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        align-content: flex-start;
+        gap: 6px;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: flex-start;
+        background: var(--r1bg);
+        color: var(--r1);
+        font:
+          400 11px/16.5px "Courier New",
+          monospace;
+        letter-spacing: 0.11px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+      .tag.pad-left {
+        padding-left: 12.45px;
+      } /* layout.counterAlign chip in Figma */
+
+      /* ---------- stage — "Background" ---------- */
+      .stage {
+        width: 100%;
+        background: var(--stage);
+        border-radius: 8px;
+        padding: 20px;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 1 — base.* baseline card (150:1556) */
+      .baseline-card {
+        flex: 1 0 0;
+        min-width: 1px;
+        background: var(--hero); /* base.bgColor */
+        border-radius: 12px;
+        padding: 24px 32px; /* base.paddingTop/Right/Bottom/Left */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px; /* base.gap */
+      }
+      .baseline-card .headline {
+        margin: 0;
+        width: 100%;
+        font-family: Arial, sans-serif; /* base.fontFamily */
+        font-size: 32px; /* base.fontSize */
+        font-weight: 700; /* base.fontWeight */
+        line-height: 40px; /* base.lineHeight */
+        letter-spacing: 0.5px; /* base.letterSpacing */
+        color: #ffffff; /* base.textColor */
+      }
+      .baseline-card .sub {
+        margin: 0;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        color: var(--hero-sub);
+      }
+
+      /* 2 — base.cornerRadius (150:1568) */
+      .radius-uniform {
+        width: 120px;
+        height: 80px;
+        background: var(--shape);
+        border: 2px solid var(--r1);
+        border-radius: 16px;
+      }
+
+      /* 3 — shape.radiusPerCorner (150:1576) */
+      .radius-percorner {
+        width: 120px;
+        height: 80px;
+        background: var(--shape);
+        border: 2px solid var(--r1);
+        border-radius: 32px 4px 32px 4px; /* tl tr br bl */
+      }
+
+      /* 4 — fx.shadow* (150:1590 / 150:1591) */
+      .shadow-wrap {
+        width: 140px;
+        height: 90px;
+        background: var(--card);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .shadow-box {
+        width: 140px;
+        height: 90px;
+        background: rgba(255, 255, 255, 0);
+        border-radius: 10px;
+        box-shadow: 4px 6px 12px 2px rgba(4, 20, 45, 0.3); /* offset 4/6 · blur 12 · spread 2 */
+      }
+
+      /* 5 — layout.* (150:1602) */
+      .flex-row {
+        width: 100%;
+        background: var(--card);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        flex-direction: row; /* layout.mode */
+        justify-content: space-between; /* layout.primaryAlign */
+        align-items: center; /* layout.counterAlign */
+      }
+      .chip {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background: var(--r1);
+        color: #ffffff;
+        font-size: 12px;
+        line-height: normal;
+        padding: 6px 12px;
+        border-radius: 100px;
+        white-space: nowrap;
+      }
+      .chip.tall {
+        padding: 14px 12px;
+      }
+
+      /* 6 — text.content / text.empty (150:1617) */
+      .text-block {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding-top: 3.2px;
+        padding-bottom: 4px;
+      }
+      .text-block p {
+        margin: 0;
+        width: 100%;
+        font-size: 14px;
+        line-height: normal;
+        color: var(--navy);
+      }
+      .text-empty-marker {
+        display: block;
+        width: 60px;
+        height: 16px;
+        min-width: 60px;
+        min-height: 16px;
+        border: 1px dashed var(--line);
+        border-radius: 3px;
+      }
+
+      /* 7 — type.align / type.case / type.decoration */
+      .type-row {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .type-row.centered {
+        align-items: center;
+        padding-top: 2px;
+      }
+      .type-line {
+        margin: 0;
+        width: 100%;
+        font-size: 14px;
+        line-height: normal;
+        color: var(--navy);
+      }
+      .align-demo {
+        width: auto;
+        text-align: center;
+        white-space: nowrap;
+      } /* type.align */
+      .case-demo {
+        text-transform: uppercase;
+      } /* type.case */
+      .decoration-demo {
+        text-decoration: underline;
+      } /* type.decoration */
+
+      /* 8 — struct.missing (161:24 / 161:26) */
+      .missing-box {
+        width: 100%;
+        height: 67.2px;
+        border: 1px dashed var(--line-grey);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 3.2px;
+        font-size: 12px;
+        line-height: normal;
+        color: var(--muted);
+        text-align: center;
+      }
+      .missing-note {
+        margin: 0;
+        font:
+          400 11px/17.6px "Courier New",
+          monospace;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      /* 9 — token.styleName (150:1658) */
+      .style-card {
+        width: 100%;
+        background: var(--card);
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .style-card p {
+        margin: 0;
+        font-size: 12.5px;
+        line-height: 20px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .style-card b {
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .style-card code {
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 12.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="section">
+        <div class="container">
+          <!-- 1 — base.* -->
+          <div class="test">
+            <div class="taglist">
+              <span class="tag">base.bgColor</span
+              ><span class="tag">base.fontFamily</span>
+              <span class="tag">base.paddingTop</span
+              ><span class="tag">base.fontSize</span>
+              <span class="tag">base.fontWeight</span
+              ><span class="tag">base.paddingRight</span>
+              <span class="tag">base.lineHeight</span
+              ><span class="tag">base.paddingBottom</span>
+              <span class="tag">base.letterSpacing</span
+              ><span class="tag">base.paddingLeft</span>
+              <span class="tag">base.gap</span
+              ><span class="tag">base.textColor</span>
+            </div>
+            <div class="stage">
+              <div class="baseline-card">
+                <h3 class="headline">Compliance without the chaos</h3>
+                <p class="sub">
+                  Automated evidence collection for teams that ship fast.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 — base.cornerRadius -->
+          <div class="test">
+            <div class="taglist">
+              <span class="tag">base.cornerRadius</span>
+            </div>
+            <div class="stage"><div class="radius-uniform"></div></div>
+          </div>
+
+          <!-- 3 — shape.radiusPerCorner -->
+          <div class="test">
+            <div class="taglist">
+              <span class="tag">shape.radiusPerCorner</span>
+            </div>
+            <div class="stage"><div class="radius-percorner"></div></div>
+          </div>
+
+          <!-- 4 — fx.shadow* -->
+          <div class="test">
+            <div class="taglist tight">
+              <span class="tag">fx.shadowBlur</span
+              ><span class="tag">fx.shadowSpread</span>
+              <span class="tag">fx.shadowColor</span
+              ><span class="tag">fx.shadowOffset</span>
+            </div>
+            <div class="stage">
+              <div class="shadow-wrap"><div class="shadow-box"></div></div>
+            </div>
+          </div>
+
+          <!-- 5 — layout.* -->
+          <div class="test">
+            <div class="taglist tight">
+              <span class="tag">layout.mode</span
+              ><span class="tag">layout.primaryAlign</span>
+              <span class="tag pad-left">layout.counterAlign</span>
+            </div>
+            <div class="flex-row">
+              <span class="chip">Item A</span>
+              <span class="chip tall">Item B</span>
+              <span class="chip">Item C</span>
+            </div>
+          </div>
+
+          <!-- 6 — text.content / text.empty -->
+          <div class="test">
+            <div class="taglist tight">
+              <span class="tag">text.content</span
+              ><span class="tag">text.empty</span>
+            </div>
+            <div class="text-block">
+              <p>
+                This paragraph should match the design text exactly,<br />character
+                for character.
+              </p>
+              <span
+                class="text-empty-marker"
+                title="intentionally empty text node"
+              ></span>
+            </div>
+          </div>
+
+          <!-- 7 — type.align / type.case / type.decoration -->
+          <div class="test">
+            <div class="taglist tight">
+              <span class="tag">type.align</span
+              ><span class="tag">type.case</span>
+              <span class="tag">type.decoration</span>
+            </div>
+            <div class="type-row centered">
+              <p class="type-line align-demo">Centered line (type.align)</p>
+            </div>
+            <div class="type-row">
+              <p class="type-line case-demo">uppercase line (type.case)</p>
+            </div>
+            <div class="type-row">
+              <p class="type-line decoration-demo">
+                Underlined line (type.decoration)
+              </p>
+            </div>
+          </div>
+
+          <!-- 8 — struct.missing -->
+          <div class="test">
+            <div class="taglist"><span class="tag">struct.missing</span></div>
+            <div class="missing-box">intentionally empty here</div>
+            <p class="missing-note">
+              Add ONE extra layer here in Figma only &mdash; leave the build
+              empty. Tests "designed but not built"
+            </p>
+          </div>
+
+          <!-- 9 — token.styleName -->
+          <div class="test">
+            <div class="taglist"><span class="tag">token.styleName</span></div>
+            <div class="style-card">
+              <p>
+                <b>No dedicated shape.</b> This check is enrichment, not a
+                verdict &mdash; it attaches a Figma style name (e.g.
+                <code>Display/Hero/Large</code>) to any finding whose layer has
+                a Figma Style applied. Attach a text/fill/effect style to any
+                layer<br />above in Figma and this fires automatically.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

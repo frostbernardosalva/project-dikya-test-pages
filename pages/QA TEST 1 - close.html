@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Phantom Specter — QA TEST 1 — Close (Release 1)</title>
+<style>
+  :root{
+    --navy:#04142D;
+    --muted:#6B7280;
+    --line:#D7DCE5;
+    --bg:#F4F6FB;
+    --card:#FFFFFF;
+    --r1:#0033B8;      /* Release 1 accent */
+    --r1bg:#E8EDFC;
+    --w2:#7C3AED;      /* Wave 2 accent */
+    --w2bg:#F1E9FE;
+    --w3:#EA580C;      /* Wave 3 accent */
+    --w3bg:#FDECE1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:#DCE0EA;
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--navy);
+  }
+  .page{
+    width:1440px;
+    margin:0 auto;
+    background:var(--bg);
+    padding:0 0 120px 0;
+  }
+
+  /* ---------- top banner ---------- */
+  .banner{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 64px;
+  }
+  .banner h1{
+    margin:0 0 8px 0;
+    font-size:24px;
+  }
+  .banner p{
+    margin:0;
+    max-width:900px;
+    font-size:13px;
+    line-height:1.6;
+    color:#B9C2D6;
+  }
+  .banner p b{ color:#fff; }
+
+  /* ---------- section chrome ---------- */
+  .section{ padding:48px 64px 16px 64px; }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:28px;
+    padding-bottom:16px;
+    border-bottom:3px solid var(--accent);
+  }
+  .section-head .badge{
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    background:var(--accent);
+    padding:4px 10px;
+    border-radius:100px;
+    letter-spacing:.02em;
+  }
+  .section-head h2{ margin:0; font-size:20px; }
+  .section-head .count{ font-size:12px; color:var(--muted); }
+  .section-1{ --accent:var(--r1); }
+  .section-2{ --accent:var(--w2); }
+  .section-3{ --accent:var(--w3); }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:28px;
+    align-items:start;
+  }
+  .grid.wide{ grid-template-columns:repeat(2, 1fr); }
+
+  /* ---------- test block chrome ---------- */
+  .test{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+  }
+  .test.span2{ grid-column:span 2; }
+  .test.span3{ grid-column:span 3; }
+  .tag{
+    display:inline-block;
+    font:11px/1.5 "Courier New", monospace;
+    text-transform:none;
+    letter-spacing:.01em;
+    color:var(--accent);
+    background:var(--accent-bg);
+    padding:3px 8px;
+    border-radius:4px;
+    margin:0 6px 6px 0;
+  }
+  .section-1 .tag{ --accent-bg:var(--r1bg); }
+  .section-2 .tag{ --accent-bg:var(--w2bg); }
+  .section-3 .tag{ --accent-bg:var(--w3bg); }
+  .taglist{ margin-bottom:12px; }
+  .stage{
+    background:#EEF1F7;
+    border-radius:8px;
+    padding:20px;
+    min-height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .spec{
+    margin-top:10px;
+    font:11px/1.6 "Courier New", monospace;
+    color:var(--muted);
+    white-space:pre-wrap;
+  }
+  .note{
+    border:1.5px dashed var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.6;
+    background:#fff;
+  }
+  .note b{ color:var(--navy); }
+
+  /* ==================================================================
+     SECTION 1 — RELEASE 1 test shapes
+     ================================================================== */
+
+  /* 1.1 Baseline Card — base.fontFamily/fontSize/fontWeight/lineHeight/
+        letterSpacing/textColor/bgColor/paddingT-R-B-L/gap */
+  .baseline-card{
+    width:100%;
+    background:#0D2440;         /* base.bgColor — CLOSE: subtle shift */
+    padding:43px 35px 21px 19px; /* T R B L — CLOSE: each ~3px off */
+    border-radius:12px;          /* base.cornerRadius (uniform) also visible here */
+    display:flex;
+    flex-direction:column;
+    gap:19px;                    /* base.gap — CLOSE: 19px vs 16px */
+  }
+  .baseline-card .headline{
+    margin:0;
+    font-family:Arial, sans-serif;   /* base.fontFamily */
+    font-size:33px;                  /* base.fontSize — CLOSE: 33px vs 32px */
+    font-weight:650;                 /* base.fontWeight — CLOSE: 650 vs 700 */
+    line-height:42px;                /* base.lineHeight — CLOSE: 42px vs 40px */
+    letter-spacing:0.8px;            /* base.letterSpacing — CLOSE: 0.8px vs 0.5px */
+    color:#F0F0F0;                   /* base.textColor — CLOSE: off-white */
+  }
+  .baseline-card .sub{
+    margin:0;
+    font-family:Arial, sans-serif;
+    font-size:16px;
+    font-weight:400;
+    line-height:24px;
+    color:#B9C2D6;
+  }
+
+  /* 1.2 Corner radius — uniform */
+  .radius-uniform{
+    width:120px; height:80px;
+    background:#DCE3F5;
+    border:2px solid var(--r1);
+    border-radius:17.5px; /* base.cornerRadius — CLOSE: 17.5px vs 16px */
+  }
+
+  /* 1.3 Corner radius — per corner */
+  .radius-percorner{
+    width:120px; height:80px;
+    background:#DCE3F5;
+    border:2px solid var(--r1);
+    border-radius:30px 6px 30px 6px; /* shape.radiusPerCorner — CLOSE: each ~2px off */
+  }
+
+  /* 1.4 Shadow box */
+  .shadow-box{
+    width:140px; height:90px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:5px 7px 14px 3px rgba(10,28,55,0.33); /* CLOSE: small nudge on every value */
+  }
+
+  /* 1.5 Flex row — mode / primary / counter align */
+  .flex-row{
+    width:100%;
+    display:flex;
+    flex-direction:row;             /* layout.mode */
+    justify-content:space-between;  /* layout.primaryAlign */
+    align-items:center;             /* layout.counterAlign */
+    background:#fff;
+    border-radius:8px;
+    padding:16px;
+  }
+  .chip{ background:var(--r1); color:#fff; font-size:12px; padding:6px 12px; border-radius:100px; }
+  .chip.tall{ padding:14px 12px; }
+
+  /* 1.6 text content / empty */
+  .text-content p{ margin:0 0 8px 0; font-size:14px; }
+  .text-empty-marker{
+    display:inline-block; min-width:60px; min-height:16px;
+    border:1px dashed var(--line); border-radius:3px;
+  }
+
+  /* 1.7 align / case / decoration */
+  .type-line{ font-size:14px; margin:0 0 10px 0; }
+  .align-demo{ text-align:center; }      /* type.align */
+  .case-demo{ text-transform:uppercase; } /* type.case */
+  .decoration-demo{ text-decoration:underline; } /* type.decoration */
+
+  /* 1.8 extra element */
+  .extra-badge{
+    display:inline-block;
+    background:#FEE2E2; color:#991B1B;
+    font-size:11px; font-weight:700;
+    padding:6px 12px; border-radius:100px;
+  }
+
+  /* 1.9 missing placeholder */
+  .missing-box{
+    height:64px;
+    border:1.5px dashed #C7CAD1;
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted); font-size:12px;
+  }
+
+  /* ==================================================================
+     SECTION 2 — WAVE 2 test shapes
+     ================================================================== */
+
+  /* 2.1 image fit */
+  .img-fit-frame{
+    width:160px; height:90px;
+    overflow:hidden;
+    border-radius:8px;
+  }
+  .img-fit-frame img{
+    width:100%; height:100%;
+    object-fit:cover; /* fill.imageScaleMode */
+    display:block;
+  }
+
+  /* 2.2 hidden fill */
+  .hidden-fill-box{
+    width:140px; height:80px;
+    background-color:#EAD9FF; /* fill.visible */
+    border-radius:8px;
+  }
+
+  /* 2.3 background blur */
+  .blur-stage{
+    position:relative;
+    width:100%; height:110px;
+    border-radius:10px;
+    background:linear-gradient(135deg,#7C3AED,#0033B8,#EA580C);
+    overflow:hidden;
+  }
+  .blur-panel{
+    position:absolute; inset:16px 40px;
+    background:rgba(255,255,255,0.35);
+    backdrop-filter:blur(12px);   /* fx.backgroundBlur */
+    -webkit-backdrop-filter:blur(12px);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:11px; font-weight:700;
+  }
+
+  /* 2.4 inner shadow */
+  .inner-shadow-box{
+    width:140px; height:80px;
+    background:#EDEFF5;
+    border-radius:8px;
+    box-shadow:inset 0 0 12px rgba(4,20,45,0.35); /* fx.innerShadow */
+  }
+
+  /* 2.5 layer blur */
+  .blur-circle-stage{ display:flex; align-items:center; justify-content:center; }
+  .blur-circle{
+    width:70px; height:70px; border-radius:50%;
+    background:var(--w2);
+    filter:blur(6px); /* fx.layerBlur */
+  }
+
+  /* 2.6 stacked shadows */
+  .stack-shadow-box{
+    width:110px; height:70px;
+    background:#fff;
+    border-radius:8px;
+    box-shadow:
+      3px 3px 0 #0033B8,
+      6px 6px 0 #7C3AED,
+      9px 9px 0 #EA580C; /* fx.shadowCount */
+    margin:0 auto;
+  }
+
+  /* 2.7 absolute position */
+  .abs-parent{
+    position:relative;
+    width:100%; height:90px;
+    background:#fff;
+    border-radius:8px;
+  }
+  .abs-child{
+    position:absolute; /* layout.absolute */
+    top:12px; right:12px;
+    background:var(--w2); color:#fff;
+    font-size:11px; padding:4px 10px; border-radius:100px;
+  }
+
+  /* 2.8 clip content */
+  .clip-parent{
+    width:100%; height:70px;
+    overflow:hidden;  /* layout.clips */
+    background:#fff;
+    border-radius:8px;
+    position:relative;
+  }
+  .clip-child{
+    width:120px; height:120px;
+    background:var(--w2bg);
+    border:2px solid var(--w2);
+    border-radius:8px;
+    position:absolute; left:20px; top:20px;
+  }
+
+  /* 2.9 wrap + row-gap */
+  .wrap-row{
+    display:flex;
+    flex-wrap:wrap;        /* layout.wrap */
+    row-gap:16px;          /* layout.counterGap */
+    column-gap:8px;
+    width:260px;
+  }
+  .wrap-chip{ background:var(--w2); color:#fff; font-size:11px; padding:6px 10px; border-radius:100px; }
+
+  /* 2.10 min/max */
+  .minmax-box{
+    min-width:100px; max-width:220px;
+    min-height:50px; max-height:90px;
+    width:60%;
+    background:#fff; border:2px dashed var(--w2);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:var(--muted); text-align:center; padding:8px;
+  }
+
+  /* 2.11 repeated items */
+  .repeat-row{ display:flex; gap:12px; }
+  .repeat-card{
+    width:70px; height:70px;
+    background:#fff; border-radius:8px;
+    border:1px solid var(--line);
+  }
+
+  /* 2.12 hidden shipped */
+  .hidden-shipped-box{
+    width:140px; height:70px;
+    background:var(--w2bg);
+    border:1px solid var(--w2);
+    border-radius:8px;
+  }
+
+  /* 2.13 type style panel */
+  .type-panel p{ margin:0 0 10px 0; }
+  .italic-line{ font-style:italic; font-size:13px; }               /* type.italic */
+  .clamp-line{
+    font-size:12px; margin:0 0 10px 0;
+    display:-webkit-box;
+    -webkit-line-clamp:2;                 /* type.maxLines */
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .truncate-line{
+    font-size:12px;
+    white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis;               /* type.truncation */
+    width:100%;
+  }
+  .para-a, .para-b{ font-size:12px; margin-top:14px; }             /* type.paragraphSpacing (margin-block) */
+  .valign-box{
+    height:56px; display:flex; align-items:center;                /* type.valign */
+    background:#F4F6FB; border-radius:6px; padding:0 10px;
+    font-size:12px;
+  }
+
+  /* 2.14 blend mode */
+  .blend-stage{ position:relative; height:80px; }
+  .blend-a, .blend-b{
+    position:absolute; width:60px; height:60px; border-radius:50%;
+  }
+  .blend-a{ background:#0033B8; left:30px; top:10px; }
+  .blend-b{ background:#EA580C; left:70px; top:10px; mix-blend-mode:multiply; } /* fill.blendMode */
+
+  /* 2.15 gradient fill */
+  .gradient-box{
+    width:100%; height:80px; border-radius:8px;
+    background:linear-gradient(135deg, #0033B8 0%, #7C3AED 100%); /* fill.gradientType + gradientStops */
+  }
+
+  /* 2.16 copy length */
+  .length-text{ font-size:13px; line-height:1.5; }
+
+  /* 2.17 grow / self-align */
+  .grow-row{ display:flex; align-items:flex-start; gap:8px; width:100%; height:70px; background:#fff; border-radius:8px; padding:10px; }
+  .grow-item{ background:var(--w2bg); border:1px solid var(--w2); border-radius:6px; padding:8px; font-size:10px; }
+  .grow-fill{ flex-grow:1; }             /* layout.grow */
+  .grow-end{ align-self:flex-end; }      /* layout.selfAlign */
+
+  /* 2.18 sizing modes */
+  .sizing-row{ display:flex; gap:10px; width:100%; }
+  .size-hug{ width:fit-content; }        /* layout.sizingH: hug */
+  .size-fill{ width:100%; }              /* layout.sizingH: fill */
+  .size-fixed{ width:180px; }            /* layout.sizingH: fixed */
+  .size-box{ background:var(--w2bg); border:1px solid var(--w2); border-radius:6px; padding:10px 14px; font-size:10px; white-space:nowrap; }
+
+  /* 2.19 aspect ratio */
+  .aspect-box{
+    width:180px;
+    aspect-ratio:16/9;  /* shape.aspectRatio */
+    background:var(--w2bg);
+    border:1px solid var(--w2);
+    border-radius:8px;
+  }
+
+  /* 2.20 reading order */
+  .order-row{ display:flex; gap:10px; }
+  .order-chip{ background:#fff; border:1px solid var(--line); border-radius:6px; padding:10px 14px; font-size:13px; font-weight:700; }
+  .order-1{ order:3; }  /* struct.order — DOM order 1,2,3 but visual order scrambled */
+  .order-2{ order:1; }
+  .order-3{ order:2; }
+
+  /* ==================================================================
+     SECTION 3 — WAVE 3 test shapes
+     ================================================================== */
+
+  .btn{
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    font-weight:700;
+    padding:12px 22px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    transition:background-color 0.2s ease, transform 0.15s ease; /* state.transition */
+  }
+  .btn-primary{
+    background:var(--r1); color:#fff;
+  }
+  .btn-primary:hover{ background:#00268F; }        /* state.hover */
+  .btn-primary:active{ background:#001A66; transform:translateY(1px); } /* state.pressed */
+  .btn-primary:focus-visible{ outline:3px solid #93B4FF; outline-offset:2px; } /* state.focus */
+  .btn-primary:disabled{ background:#A9B4C9; cursor:not-allowed; }         /* state.disabled */
+
+  .btn-secondary{
+    background:#fff; color:var(--r1); border:2px solid var(--r1);
+  }
+  .btn-secondary:hover{ background:var(--r1bg); }
+  .btn-tertiary{
+    background:transparent; color:var(--r1); text-decoration:underline; padding:12px 8px;
+  }
+
+  .btn-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+
+  .grid-layout{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr); /* layout.grid */
+    grid-template-rows:repeat(2, 1fr);
+    gap:10px;
+    width:180px; height:140px;
+  }
+  .grid-cell{ background:var(--w3bg); border:1px solid var(--w3); border-radius:6px; }
+
+  @media (max-width:767px){
+    .presence-box{ display:none; } /* rwd.presence — hides at Mobile breakpoint */
+  }
+  .presence-box{
+    width:140px; height:56px;
+    background:var(--w3bg); border:1px solid var(--w3); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:var(--w3);
+  }
+
+  footer{ text-align:center; color:var(--muted); font-size:12px; padding:40px 0 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="banner">
+    <h1>Phantom Specter — QA TEST 1 — Close: Release 1</h1>
+    <p>
+      This is a <b>CLOSE deviation</b> build. Values are nudged just past the pass tolerance but stay inside the close band — a correct scan should report these as <b>Close</b>, not Pass or Fix. Anything not listed as changed below is left matching the design on purpose, to confirm the scan doesn't flag things that are actually fine.<br><br>
+      Build this Figma design ONCE from the original <b>QA TEST 1.html</b> baseline — do not
+      change the Figma file for this test. Then point Phantom Specter's Dev URL at this file
+      instead and re-scan against that same Figma frame. Each caption below shows
+      <b>design → build</b> so you can confirm the reported delta matches what you see here.
+    </p>
+  </div>
+
+  <section class="section section-1">
+    <div class="section-head">
+      <span class="badge">Section 1</span>
+      <h2>Release 1</h2>
+      <span class="count">29 checks — rows 31–59</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="test span2">
+        <div class="taglist">
+          <span class="tag">base.fontFamily</span><span class="tag">base.fontSize</span>
+          <span class="tag">base.fontWeight</span><span class="tag">base.lineHeight</span>
+          <span class="tag">base.letterSpacing</span><span class="tag">base.textColor</span>
+          <span class="tag">base.bgColor</span><span class="tag">base.paddingTop</span>
+          <span class="tag">base.paddingRight</span><span class="tag">base.paddingBottom</span>
+          <span class="tag">base.paddingLeft</span><span class="tag">base.gap</span>
+        </div>
+        <div class="stage">
+          <div class="baseline-card">
+            <h3 class="headline">Compliance without the chaos</h3>
+            <p class="sub">Automated evidence collection for teams that ship fast.</p>
+          </div>
+        </div>
+        <div class="spec">design → build (CLOSE)
+bg #0A1F3D → #0D2440 · padding 40/32/24/16 → 43/35/21/19 · gap 16 → 19px
+font Arial 32/700 → 33/650 · line-height 40 → 42px · letter-spacing 0.5 → 0.8px · color #FFFFFF → #F0F0F0</div>
+      </div>
+
+      <div class="test">
+        <div class="taglist"><span class="tag">base.cornerRadius</span></div>
+        <div class="stage"><div class="radius-uniform"></div></div>
+        <div class="spec">design → build (CLOSE): border-radius 16px → 17.5px</div>
+      </div>
+
+      <div class="test">
+        <div class="taglist"><span class="tag">shape.radiusPerCorner</span></div>
+        <div class="stage"><div class="radius-percorner"></div></div>
+        <div class="spec">design → build (CLOSE): 32/4/32/4 → 30/6/30/6</div>
+      </div>
+
+      <div class="test">
+        <div class="taglist">
+          <span class="tag">fx.shadowBlur</span><span class="tag">fx.shadowColor</span>
+          <span class="tag">fx.shadowOffset</span><span class="tag">fx.shadowSpread</span>
+        </div>
+        <div class="stage"><div class="shadow-box"></div></div>
+        <div class="spec">design → build (CLOSE)
+offset 4/6 → 5/7 · blur 12 → 14 · spread 2 → 3 · color #04142D @30% → ~#0A1C37 @33%</div>
+      </div>
+
+      <div class="test span2">
+        <div class="taglist">
+          <span class="tag">layout.mode</span><span class="tag">layout.primaryAlign</span>
+          <span class="tag">layout.counterAlign</span>
+        </div>
+        <div class="flex-row">
+          <span class="chip">Item A</span>
+          <span class="chip tall">Item B</span>
+          <span class="chip">Item C</span>
+        </div>
+        <div class="spec">unchanged — flex-direction, justify-content and align-items match the design</div>
+      </div>
+
+      <div class="test">
+        <div class="taglist"><span class="tag">text.content</span><span class="tag">text.empty</span></div>
+        <div class="text-content">
+          <p>This paragraph should match the design copy exactly, word for word.</p>
+          <span class="text-empty-marker" title="intentionally empty text node"></span>
+        </div>
+        <div class="spec">unchanged — empty text node still empty, copy above reworded slightly</div>
+      </div>
+
+      <div class="test">
+        <div class="taglist">
+          <span class="tag">type.align</span><span class="tag">type.case</span><span class="tag">type.decoration</span>
+        </div>
+        <p class="type-line align-demo">Centered line (type.align)</p>
+        <p class="type-line case-demo">uppercase line (type.case)</p>
+        <p class="type-line decoration-demo">Underlined line (type.decoration)</p>
+      </div>
+
+      <div class="test">
+        <div class="taglist"><span class="tag">struct.extra</span></div>
+        <div class="stage"><span class="extra-badge">Built Only</span></div>
+        <div class="spec">Do NOT recreate this in Figma — tests "built but not designed"</div>
+      </div>
+
+      <div class="test">
+        <div class="taglist"><span class="tag">struct.missing</span></div>
+        <div class="missing-box">intentionally empty here</div>
+        <div class="spec">Add ONE extra layer here in Figma only — leave the build empty. Tests "designed but not built"</div>
+      </div>
+
+      <div class="test span3">
+        <div class="taglist"><span class="tag">token.styleName</span></div>
+        <div class="note">
+          <b>No dedicated shape.</b> This check is enrichment, not a verdict — it attaches a Figma
+          style name (e.g. <code>Display/Hero/Large</code>) to any finding whose layer has a Figma
+          Style applied. Attach a text/fill/effect style to any layer above in Figma and this fires
+          automatically.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>Phantom Specter v2 — QA test fixture · 1440 desktop · QA TEST 1 — Close · 29 checks — rows 31–59</footer>
+
+</div>
+</body>
+</html>
