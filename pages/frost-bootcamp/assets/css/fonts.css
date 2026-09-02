@@ -1,39 +1,42 @@
 /* ------------------------------------------------------------------
    Aeonik Pro — self-hosted. This is the typeface the Figma comps use.
-   Only the three weights the page actually references are shipped:
-     400 Regular  (default body copy)
-     500 Medium   (.cta, font-medium — 35 uses)
-     700 Bold     (.eyebrow, font-bold — 31 uses)
-   No italics are used anywhere in the markup, so none are included.
-   Converted from the licensed .otf/.ttf originals to .woff2
-   (429 KB -> 187 KB). Add a weight here AND its file before using a
-   new font-* utility, or the browser will synthesise a fake one.
+
+   One file, and it is VARIABLE: despite the "-Regular" in its name,
+   AeonikPro-Regular.woff2 carries a `wght` axis spanning 100-900
+   (named instances Air 100 · Thin 200 · Light 300 · Regular 400 ·
+   Medium 500 · Bold 700 · Black 900). The `font-weight: 100 900`
+   range below is what exposes that axis to CSS — declaring a single
+   value pins the browser to the 400 default instance and throws the
+   rest away.
+
+   Two things follow from the range:
+   - Any font-* weight utility works without shipping another file,
+     and no weight is ever synthesised.
+   - font-weight becomes animatable, which is what lets .apply-title
+     interpolate 400 -> 700 (see the @layer components block in
+     index.html). With static instances it could only ever snap.
+
+   The separate Medium and Bold .woff2 files this used to load are
+   redundant now — the variable file covers both, metrically identical
+   to the statics (verified: matching advance widths at 400/500/700,
+   same 930/-210 vertical metrics), at 72 KB against their 187 KB.
+   They are still in assets/fonts/ but nothing references them.
+
+   No italics are used anywhere in the markup; a variable italic
+   companion exists if that ever changes.
 
    NOTE: Aeonik Pro is a commercial typeface. Self-hosting exposes the
    font files at a public URL, which requires a WEBFONT licence from
-   CoType Foundry — a desktop licence alone does not cover this.
+   CoType Foundry — a desktop licence alone does not cover this. Note
+   also that publishing the variable file exposes the whole 100-900
+   range rather than three fixed instances; some foundries licence the
+   variable font separately.
    ------------------------------------------------------------------ */
 
 @font-face {
   font-family: "Aeonik Pro";
   src: url("../fonts/AeonikPro-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("../fonts/AeonikPro-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("../fonts/AeonikPro-Bold.woff2") format("woff2");
-  font-weight: 700;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }

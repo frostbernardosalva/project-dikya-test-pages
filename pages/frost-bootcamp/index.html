@@ -10,25 +10,11 @@
     />
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Aeonik Pro is self-hosted (see assets/css/fonts.css). Preloading the
-         three weights stops the flash of fallback text on first paint. -->
+    <!-- Aeonik Pro is self-hosted (see assets/css/fonts.css). One preload
+         covers every weight on the page: the file is variable, 100-900. -->
     <link
       rel="preload"
       href="assets/fonts/AeonikPro-Regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/AeonikPro-Medium.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/AeonikPro-Bold.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -77,6 +63,42 @@
         }
         .track[aria-current="true"] {
           color: #000988;
+        }
+        /* "How to apply" step titles. Aeonik Pro is loaded as a variable font
+       (wght 100-900 — see assets/css/fonts.css), so font-weight is a real
+       animatable number here and 400 -> 700 interpolates stroke by stroke.
+       Interpolating still widens the text, though, which would push the
+       description panel for the whole 300ms, so .at-bold is a second copy
+       of the label held at 700 and never painted: it fixes the grid cell at
+       bold width, and .at-regular animates inside that fixed box. State
+       comes from aria-expanded on the parent .apply-step, as .track does
+       from aria-current. #000 @ 25% inactive, #060d2a bold active — Figma
+       node 704:757. */
+        .apply-title {
+          @apply grid whitespace-nowrap text-h2;
+        }
+        .apply-title > span {
+          grid-area: 1 / 1;
+        }
+        /* Width anchor only. visibility:hidden still reserves the box but
+       paints nothing and drops it from the accessibility tree. */
+        .apply-title > .at-bold {
+          @apply font-bold;
+          visibility: hidden;
+        }
+        .apply-title > .at-regular {
+          font-weight: 400;
+          color: rgb(0 0 0 / 0.25);
+          transition:
+            font-weight 0.3s ease,
+            color 0.3s ease;
+        }
+        .apply-step[aria-expanded="false"]:hover .at-regular {
+          color: rgb(0 0 0 / 0.5);
+        }
+        .apply-step[aria-expanded="true"] .at-regular {
+          @apply font-bold;
+          color: #060d2a;
         }
       }
       @layer utilities {
@@ -492,7 +514,7 @@
                   data-track="Rendering"
                   data-desc="The art of rendering: turning data into pixels, one frame at a time."
                   aria-current="true"
-                  class="track whitespace-nowrap text-display font-bold uppercase bg-gradient-to-b from-[#000988] from-0% via-[#000988] via-50% to-[#000988] bg-clip-text !text-transparent"
+                  class="track whitespace-nowrap text-display font-bold uppercase"
                 >
                   Rendering
                 </button>
@@ -670,9 +692,9 @@
         <div class="shell flex flex-col gap-8">
           <p class="eyebrow text-navy/50">Getting into Frost</p>
 
-          <div class="flex flex-col gap-[clamp(3.5rem,7.29vw,8.75rem)]">
+          <div class="flex flex-col gap-[clamp(3.5rem,7.29167vw,8.75rem)]">
             <div class="flex flex-col gap-10 text-navy" data-reveal>
-              <h2 class="max-w-[1009px] text-h2">
+              <h2 class="max-w-[20ch] text-h2">
                 <span class="block">We hire from every</span>
                 <span class="block"
                   >cohort.
@@ -681,7 +703,7 @@
                   ></span
                 >
               </h2>
-              <p class="trim max-w-[484px] text-body opacity-80">
+              <p class="trim max-w-[44ch] text-body opacity-80">
                 Once you're in, you'll receive additional training to ensure
                 your readiness. Before anyone touches client work, they pass
                 through <strong class="font-bold">Gate One</strong> — our
@@ -694,13 +716,13 @@
             >
               <li class="flex gap-[30px]" data-reveal>
                 <span
-                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white"
+                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white pt-[1rem] pr-[0.75rem] pb-[1.0625rem] pl-[0.8125rem]"
                   aria-hidden="true"
                   >01</span
                 >
                 <div class="flex flex-col gap-[25px] pt-4 text-navy">
                   <h3 class="trim text-sub font-bold opacity-80">Prove it</h3>
-                  <p class="trim text-body opacity-80">
+                  <p class="trim text-body opacity-80 max-w-[30ch]">
                     We gauge how you take feedback, follow through, and apply it
                     to your work.
                   </p>
@@ -708,7 +730,7 @@
               </li>
               <li class="flex gap-[30px]" data-reveal>
                 <span
-                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white"
+                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white pt-[1rem] pr-[0.75rem] pb-[1.0625rem] pl-[0.8125rem]"
                   aria-hidden="true"
                   >02</span
                 >
@@ -716,7 +738,7 @@
                   <h3 class="trim text-sub font-bold opacity-80">
                     Get noticed
                   </h3>
-                  <p class="trim text-body opacity-80">
+                  <p class="trim text-body opacity-80 max-w-[36ch]">
                     Standouts move to follow-through conversations with our
                     team, then into our talent pool.
                   </p>
@@ -727,13 +749,13 @@
                 data-reveal
               >
                 <span
-                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white"
+                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white pt-[1rem] pr-[0.75rem] pb-[1.0625rem] pl-[0.8125rem]"
                   aria-hidden="true"
                   >03</span
                 >
                 <div class="flex flex-col gap-[25px] pt-4 text-ink">
                   <h3 class="trim text-sub font-bold opacity-80">Get placed</h3>
-                  <p class="trim text-body opacity-80">
+                  <p class="trim text-body opacity-80 max-w-[38ch]">
                     Based on those conversations, we offer an engagement —
                     full-time, project-based, or fractional.
                   </p>
@@ -748,7 +770,7 @@
      YOUR INSTRUCTOR — node 704:738 · bg #000988 · px100 py150 · gap192
      image 499×536 @ x80 y150 · content 992 gap120 · 2 cols gap120
 ════════════════════════════════════════════════════════════════════ -->
-      <section class="overflow-hidden bg-blue py-block text-white hidden">
+      <section class="overflow-hidden bg-blue py-block text-white">
         <div
           class="mx-auto grid w-full max-w-[1920px] grid-cols-1 items-start gap-12 px-gutter lg:grid-cols-[499fr_992fr] lg:gap-[clamp(3rem,10vw,12rem)]"
         >
@@ -796,7 +818,7 @@
       <!-- ═══════════════════════════════════════════════════════════════════
      WHO SHOULD JOIN — node 704:747 · h887 · px100 py150 · gap32
 ════════════════════════════════════════════════════════════════════ -->
-      <section class="bg-white py-block hidden">
+      <section class="bg-white py-block">
         <!-- inner block = 587px so section total lands on Figma's 887px (150 + 587 + 150) -->
         <div
           class="shell flex min-h-[clamp(16rem,30.57vw,36.69rem)] flex-col gap-8"
@@ -809,7 +831,7 @@
                 >willingness to be critiqued daily</strong
               >
             </h2>
-            <p class="trim max-w-[541px] text-body text-black" data-reveal>
+            <p class="trim max-w-[50ch] text-body text-black" data-reveal>
               Our participants come from IT, development, graphic design, web
               design, and solo roles where no one senior ever reviewed their
               work. Each track page tells you who it fits.
@@ -823,12 +845,14 @@
      content gap113 · image 388×480 · rows h96, gap32
      Row 1 active (100%), rows 2–4 at 50% with collapsed descriptions.
 ════════════════════════════════════════════════════════════════════ -->
-      <section class="bg-white py-block hidden">
-        <div class="shell flex flex-col gap-10 lg:flex-row lg:gap-[81px]">
-          <h2 class="eyebrow shrink-0 text-black/50">How to apply</h2>
+      <section class="bg-white py-block overflow-x-hidden">
+        <div class="shell flex flex-col gap-10 lg:flex-row lg:gap-[5.0625rem]">
+          <h2 class="eyebrow shrink-0 text-black/50 font-manrope">
+            How to apply
+          </h2>
 
           <div
-            class="flex flex-1 flex-col items-center gap-10 lg:flex-row lg:gap-[clamp(3rem,5.88vw,7.06rem)]"
+            class="flex flex-1 flex-col items-center gap-10 lg:flex-row lg:gap-[clamp(3rem,5.8854167vw,7.06rem)]"
           >
             <!-- #image · node 704:756 -->
             <img
@@ -847,17 +871,17 @@
                   class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
                   aria-expanded="true"
                 >
-                  <span
-                    class="apply-title whitespace-nowrap text-h2 font-bold text-navy transition-all duration-300"
-                    >Apply</span
-                  >
+                  <span class="apply-title">
+                    <span class="at-regular">Apply</span>
+                    <span class="at-bold" aria-hidden="true">Apply</span>
+                  </span>
                   <span
                     class="apply-panel grid flex-1 grid-rows-[1fr] overflow-hidden transition-all duration-300 lg:h-full"
                   >
                     <span
                       class="flex min-h-0 flex-col items-start gap-2 text-body opacity-100 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
                     >
-                      <span class="max-w-[250px] text-black opacity-80 liga-off"
+                      <span class="max-w-[22ch] text-black opacity-80 liga-off"
                         >Submit your portfolio and tell us what you're building
                         toward.</span
                       >
@@ -876,10 +900,10 @@
                   class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
                   aria-expanded="false"
                 >
-                  <span
-                    class="apply-title whitespace-nowrap text-h2 text-black opacity-25 transition-all duration-300 group-hover:opacity-50"
-                    >Screening</span
-                  >
+                  <span class="apply-title">
+                    <span class="at-regular">Screening</span>
+                    <span class="at-bold" aria-hidden="true">Screening</span>
+                  </span>
                   <span
                     class="apply-panel grid flex-1 grid-rows-[0fr] overflow-hidden transition-all duration-300 lg:h-full"
                   >
@@ -905,10 +929,12 @@
                   class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
                   aria-expanded="false"
                 >
-                  <span
-                    class="apply-title whitespace-nowrap text-h2 text-black opacity-25 transition-all duration-300 group-hover:opacity-50"
-                    >Initial Interview</span
-                  >
+                  <span class="apply-title">
+                    <span class="at-regular">Initial Interview</span>
+                    <span class="at-bold" aria-hidden="true"
+                      >Initial Interview</span
+                    >
+                  </span>
                   <span
                     class="apply-panel grid flex-1 grid-rows-[0fr] overflow-hidden transition-all duration-300 lg:h-full"
                   >
@@ -916,12 +942,12 @@
                       class="flex min-h-0 flex-col items-start gap-2 text-body opacity-0 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
                     >
                       <span class="max-w-[222px] text-deep opacity-80 liga-off"
-                        >Tell us about yourself and your interest in
-                        design.</span
+                        >Meet the team, share your ideas, and see if we're a
+                        good fit.</span
                       >
                       <span
                         class="w-[77px] shrink-0 text-slate opacity-50 liga-off"
-                        >5 minutes</span
+                        >9 minutes</span
                       >
                     </span>
                   </span>
@@ -934,10 +960,12 @@
                   class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
                   aria-expanded="false"
                 >
-                  <span
-                    class="apply-title whitespace-nowrap text-h2 text-black opacity-25 transition-all duration-300 group-hover:opacity-50"
-                    >Get Your Invite</span
-                  >
+                  <span class="apply-title">
+                    <span class="at-regular">Get Your Invite</span>
+                    <span class="at-bold" aria-hidden="true"
+                      >Get Your Invite</span
+                    >
+                  </span>
                   <span
                     class="apply-panel grid flex-1 grid-rows-[0fr] overflow-hidden transition-all duration-300 lg:h-full"
                   >
@@ -945,8 +973,8 @@
                       class="flex min-h-0 flex-col items-start gap-2 text-body opacity-0 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
                     >
                       <span class="max-w-[222px] text-deep opacity-80 liga-off"
-                        >Tell us about yourself and your interest in
-                        design.</span
+                        >Receive your invitation and take the next step toward
+                        joining the team.</span
                       >
                       <span
                         class="w-[77px] shrink-0 text-slate opacity-50 liga-off"
@@ -966,7 +994,7 @@
      content gap48 · items gap24 · border-b rgba(0,0,0,.2)
      question 24/500/1.15/-0.48 · answer 18/1.4 opacity .8 · chevron 32×34
 ════════════════════════════════════════════════════════════════════ -->
-      <section id="faqs" class="bg-off py-block hidden">
+      <section id="faqs" class="bg-off py-block">
         <div class="shell flex flex-col gap-8">
           <p class="eyebrow text-navy/50">Frequently asked questions</p>
 
@@ -976,12 +1004,12 @@
             </h2>
 
             <div id="faq" class="flex flex-col gap-6">
-              <div class="faq-item border-b border-black/20 pb-8">
+              <div class="faq-item border-b border-black/20 pb-6">
                 <h3>
                   <button
                     type="button"
                     class="faq-trigger flex w-full items-start justify-between gap-6 text-left"
-                    aria-expanded="true"
+                    aria-expanded="false"
                   >
                     <span
                       class="max-w-[560px] py-1.5 text-q font-medium text-navy liga-off"
@@ -992,16 +1020,16 @@
                       alt=""
                       width="32"
                       height="34"
-                      class="faq-icon h-[34px] w-8 shrink-0 transition-transform duration-300"
+                      class="faq-icon h-[34px] w-8 shrink-0 rotate-180 transition-transform duration-300"
                     />
                   </button>
                 </h3>
                 <div
-                  class="faq-panel grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out"
+                  class="faq-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
                 >
                   <div class="overflow-hidden">
                     <p
-                      class="max-w-[625px] pt-6 text-body text-navy opacity-80 liga-off"
+                      class="max-w-[54ch] pt-6 text-body text-navy opacity-80 liga-off"
                     >
                       Four steps: application → design test → bootcamp
                       invitation → talent pool. The design test tells us where
@@ -1161,7 +1189,7 @@
      Form gap48 · field: label 14 #71839d, input border-b white h50, 16 white
      CTA #0ff w186 · label #0a143f
 ════════════════════════════════════════════════════════════════════ -->
-      <section id="apply" class="bg-black py-block text-white hidden">
+      <section id="apply" class="bg-black py-block text-white">
         <div class="shell flex flex-col gap-12 lg:flex-row lg:gap-[81px]">
           <h2
             class="w-full shrink-0 text-display font-bold uppercase leading-none lg:max-w-[733px]"

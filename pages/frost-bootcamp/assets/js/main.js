@@ -118,7 +118,25 @@ Active track = solid #000988; neighbours = #060d2a @ 10%.
 Selecting a track updates the description and CTA label.       */
   const tracks = $$(".track"),
     trackDesc = $("#track-desc"),
-    trackCta = $("#track-cta");
+    trackCta = $("#track-cta"),
+    band = $("#track-band");
+
+  /* Centring translates the band; it does not scroll the wrapper. The wrapper
+     is overflow-hidden and the band is justify-center, so whatever overflows to
+     the LEFT sits at negative scrollLeft and no amount of scrolling can reach
+     it — scrollIntoView can centre the last track but never the first. The
+     band already carries transition-transform duration-500 for this. */
+  if (reduced) band.style.transition = "none";
+  const centreTrack = (btn) => {
+    // offsetLeft/offsetWidth are layout positions and ignore transforms, so the
+    // result is absolute rather than a delta off the current position. Measuring
+    // getBoundingClientRect() here would read whatever the 500ms slide happens
+    // to be showing and drift on every click that interrupts one.
+    const wrap = band.parentElement,
+      centre = btn.offsetLeft - wrap.offsetLeft + btn.offsetWidth / 2;
+    band.style.transform = `translateX(${wrap.clientWidth / 2 - centre}px)`;
+  };
+
   const selectTrack = (btn) => {
     tracks.forEach((t) => {
       const on = t === btn;
@@ -128,13 +146,19 @@ Selecting a track updates the description and CTA label.       */
     });
     trackDesc.textContent = btn.dataset.desc;
     trackCta.textContent = "Apply for " + btn.dataset.track;
-    btn.scrollIntoView({
-      behavior: reduced ? "auto" : "smooth",
-      block: "nearest",
-      inline: "center",
-    });
+    centreTrack(btn);
   };
   tracks.forEach((t) => t.addEventListener("click", () => selectTrack(t)));
+
+  /* The offset is measured in pixels, so it has to be remeasured whenever the
+     band's width changes: on resize, and once the real font has replaced the
+     fallback metrics it was first measured against. */
+  const recentreTrack = () => {
+    const active = tracks.find((t) => t.getAttribute("aria-current") === "true");
+    if (active) centreTrack(active);
+  };
+  addEventListener("resize", recentreTrack);
+  if (document.fonts) document.fonts.ready.then(recentreTrack);
 
   /* ── "How to apply" stepper ──────────────────────────────────── */
   $$("#apply-steps .apply-step").forEach((btn) => {
@@ -142,14 +166,9 @@ Selecting a track updates the description and CTA label.       */
       $$("#apply-steps .apply-step").forEach((other) => {
         const on = other === btn;
         other.setAttribute("aria-expanded", String(on));
-        const title = $(".apply-title", other),
-          panel = $(".apply-panel", other),
+        // .apply-title styling follows aria-expanded in CSS — nothing to do here.
+        const panel = $(".apply-panel", other),
           inner = panel.firstElementChild;
-        title.classList.toggle("font-bold", on);
-        title.classList.toggle("text-navy", on);
-        title.classList.toggle("text-black", !on);
-        title.classList.toggle("opacity-25", !on);
-        title.classList.toggle("group-hover:opacity-50", !on);
         panel.classList.toggle("grid-rows-[1fr]", on);
         panel.classList.toggle("grid-rows-[0fr]", !on);
         inner.classList.toggle("opacity-100", on);
