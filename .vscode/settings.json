@@ -1,3 +1,11 @@
 {
-  "liveServer.settings.port": 5502
+  "liveServer.settings.port": 5502,
+
+  // pages/frost-bootcamp uses Tailwind's @layer / @apply inside an inline
+  // <style type="text/tailwindcss">, compiled by the Play CDN at runtime.
+  // VS Code's CSS language server doesn't know those at-rules and reports
+  // "Unknown at rule"; silence it for this workspace.
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
 }
