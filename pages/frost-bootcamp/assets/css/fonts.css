@@ -1,0 +1,57 @@
+/* ------------------------------------------------------------------
+   Aeonik Pro — self-hosted. This is the typeface the Figma comps use.
+   Only the three weights the page actually references are shipped:
+     400 Regular  (default body copy)
+     500 Medium   (.cta, font-medium — 35 uses)
+     700 Bold     (.eyebrow, font-bold — 31 uses)
+   No italics are used anywhere in the markup, so none are included.
+   Converted from the licensed .otf/.ttf originals to .woff2
+   (429 KB -> 187 KB). Add a weight here AND its file before using a
+   new font-* utility, or the browser will synthesise a fake one.
+
+   NOTE: Aeonik Pro is a commercial typeface. Self-hosting exposes the
+   font files at a public URL, which requires a WEBFONT licence from
+   CoType Foundry — a desktop licence alone does not cover this.
+   ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: "Aeonik Pro";
+  src: url("../fonts/AeonikPro-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aeonik Pro";
+  src: url("../fonts/AeonikPro-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aeonik Pro";
+  src: url("../fonts/AeonikPro-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------
+   Manrope — self-hosted, latin subset only (U+0000-00FF), 700 alone.
+   Used by the `font-manrope` utility, currently just the numbered step
+   tags. Pulled from Google Fonts v20; add another weight here AND its
+   file before reaching for it in markup.
+
+   Unlike Aeonik Pro above, Manrope is SIL OFL 1.1, so self-hosting and
+   web use are covered with no separate licence.
+   ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: "Manrope";
+  src: url("../fonts/Manrope-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
