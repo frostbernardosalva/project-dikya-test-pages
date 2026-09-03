@@ -189,8 +189,26 @@ pause is remembered (`userPaused`) so scrolling back in does not restart it.
 Form validation is coupled to the field markup shape: `showErr()` walks
 `field.closest("div").parentElement` to find the sibling `<p class="err">`. Keep
 the `div.flex-col > label + div.border-b > input` + `p.err` nesting when editing
-or adding fields. The form does not submit anywhere — it validates and shows a
-status message.
+or adding fields. A new field also needs an `id` on its `.err` paragraph and a
+matching `aria-describedby` on the input — `showErr()` sets `aria-invalid`, but
+the message itself is only announced through that link. `#f-email` lists two
+(`h-email e-email`); the order is the reading order, helper text before error.
+The form does not submit anywhere — it validates and shows a status message.
+
+Validation timing follows "reward early, punish late", and the `strict` flag on
+`validate()` is what enforces it:
+
+- **blur and input pass `strict: false`** — an empty field is unfinished, not
+  wrong, so it stays silent (and a non-strict pass *clears* any message it was
+  showing). Format errors still surface on blur, and the `input` listener only
+  runs while a message is already up, so typing can clear an error but never
+  raise one mid-word.
+- **submit passes the default `strict: true`** — that is the only place
+  "This field is required." comes from.
+
+Do not pass `validate` as a bare callback to `map`/`filter`: those hand the
+array index in as `strict`, and index `0` is falsy, so the first field would
+silently stop being required. Keep the arrow wrapper.
 
 ## Current state of the page
 

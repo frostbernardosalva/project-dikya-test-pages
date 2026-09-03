@@ -1190,9 +1190,9 @@
      CTA #0ff w186 · label #0a143f
 ════════════════════════════════════════════════════════════════════ -->
       <section id="apply" class="bg-black py-block text-white">
-        <div class="shell flex flex-col gap-12 lg:flex-row lg:gap-[81px]">
+        <div class="shell flex flex-col gap-12 lg:flex-row lg:gap-[5.0625rem]">
           <h2
-            class="w-full shrink-0 text-display font-bold uppercase leading-none lg:max-w-[733px]"
+            class="w-full shrink-0 text-display font-bold uppercase leading-none lg:max-w-[45.8125rem]"
           >
             <span class="block">Apply</span>
             <span class="block">Now</span>
@@ -1219,12 +1219,14 @@
                     name="name"
                     type="text"
                     required
+                    aria-describedby="e-name"
                     autocomplete="name"
                     placeholder="Juan Dela Cruz"
                     class="w-full bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
                   />
                 </div>
                 <p
+                  id="e-name"
                   class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
                 ></p>
               </div>
@@ -1244,16 +1246,21 @@
                     name="email"
                     type="email"
                     required
+                    aria-describedby="h-email e-email"
                     autocomplete="email"
                     placeholder="juandelacruz@gmail.com"
                     class="w-full bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
                   />
                 </div>
-                <div class="h-2" aria-hidden="true"></div>
-                <p class="px-0.5 text-hint font-medium text-white opacity-50">
+                <!-- <div class="h-2" aria-hidden="true"></div> -->
+                <p
+                  id="h-email"
+                  class="px-0.5 text-hint font-medium text-white opacity-50 pt-2"
+                >
                   We'll send your application status here.
                 </p>
                 <p
+                  id="e-email"
                   class="err mt-1 hidden px-0.5 text-hint font-medium text-cyan"
                 ></p>
               </div>
@@ -1273,7 +1280,8 @@
                   id="f-course"
                   name="course"
                   required
-                  class="w-full appearance-none bg-transparent pr-8 pt-0.5 text-field font-medium text-white outline-none [&amp;>option]:bg-black"
+                  aria-describedby="e-course"
+                  class="w-full appearance-none bg-transparent pr-8 pt-0.5 text-field font-medium leading-[1.1] text-white outline-none [&amp;>option]:bg-black"
                 >
                   <option value="" disabled selected>Visual Designer</option>
                   <option value="ui-design">UI Design</option>
@@ -1289,6 +1297,7 @@
                 />
               </div>
               <p
+                id="e-course"
                 class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
               ></p>
             </div>
@@ -1308,11 +1317,13 @@
                   name="portfolio"
                   type="url"
                   required
+                  aria-describedby="e-portfolio"
                   placeholder="juan-portfolio.com"
                   class="w-full bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
                 />
               </div>
               <p
+                id="e-portfolio"
                 class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
               ></p>
             </div>
@@ -1331,12 +1342,14 @@
                   id="f-why"
                   name="why"
                   required
+                  aria-describedby="e-why"
                   rows="1"
                   placeholder="Tell us a bit what you’re hoping to get out of the program."
                   class="w-full resize-none bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
                 ></textarea>
               </div>
               <p
+                id="e-why"
                 class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
               ></p>
             </div>
@@ -1366,11 +1379,11 @@
      px100 pb80 · items-end gap100 · blurb 18/1.4/1.08px uppercase
      menu gap24 · 18/500/1.8px uppercase opacity .7
 ════════════════════════════════════════════════════════════════════ -->
-    <footer class="border-t border-white/20 bg-coal pb-20 pt-12 md:pt-0 hidden">
+    <footer class="bg-coal pb-20 pt-12 md:pt-0">
       <div
-        class="shell flex flex-col items-start gap-12 md:flex-row md:items-end md:justify-between md:gap-[clamp(3rem,5.21vw,6.25rem)]"
+        class="shell flex flex-col items-start gap-12 md:flex-row md:items-end md:gap-[clamp(3rem,5.21vw,6.25rem)]"
       >
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 md:flex-1">
           <img
             src="assets/logo.svg"
             alt="Frost"
@@ -1379,7 +1392,7 @@
             class="h-10 w-10"
           />
           <p
-            class="max-w-[638px] text-body uppercase tracking-[0.06em] text-white"
+            class="max-w-[38ch] text-body uppercase tracking-[0.06em] text-white"
           >
             Frost is a Manila-based<br />
             User Interface Design Agency.<br />
@@ -1393,35 +1406,40 @@
           >
             <li>
               <a
-                href="#"
+                href="https://www.facebook.com/frostdesigngroup/"
+                target="_blank"
                 class="opacity-70 transition-opacity hover:opacity-100"
                 >Facebook</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="https://www.linkedin.com/company/frostdesigngroup/"
+                target="_blank"
                 class="opacity-70 transition-opacity hover:opacity-100"
                 >LinkedIn</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="https://www.instagram.com/frostdesignph/"
+                target="_blank"
                 class="opacity-70 transition-opacity hover:opacity-100"
                 >Instagram</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="https://www.frostdesigngroup.com/"
+                target="_blank"
                 class="opacity-70 transition-opacity hover:opacity-100"
                 >Frost Website</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="https://life.frostdesigngroup.com/"
+                target="_blank"
                 class="opacity-70 transition-opacity hover:opacity-100"
                 >Life at Frost</a
               >

@@ -271,13 +271,27 @@ start it again.                                                          */
       err = $(".err", wrap);
     field.closest("div").classList.toggle("border-white", !msg);
     field.closest("div").classList.toggle("border-cyan", !!msg);
+    // The border is the sighted cue; aria-invalid is the same fact for a
+    // screen reader, which reads it together with the aria-describedby the
+    // markup points at this field's .err paragraph.
+    field.setAttribute("aria-invalid", String(!!msg));
     if (!err) return;
     err.textContent = msg || "";
     err.classList.toggle("hidden", !msg);
   };
-  const validate = (field) => {
+  /* `strict` decides whether emptiness counts as an error YET. On blur and
+     while typing it does not: a field the user has not filled in is unfinished,
+     not wrong, and shouting "required" at someone tabbing through the form is
+     the classic premature error. Submit is where required becomes true.
+     Reward early, punish late. */
+  const validate = (field, strict = true) => {
     const v = field.value.trim();
-    if (!v) return (showErr(field, "This field is required."), false);
+    if (!v) {
+      // Non-strict also CLEARS: emptying a field you had mistyped should drop
+      // the message, not swap it for a different one.
+      if (!strict) return (showErr(field, ""), true);
+      return (showErr(field, "This field is required."), false);
+    }
     if (field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))
       return (showErr(field, "Enter a valid email address."), false);
     if (
@@ -289,9 +303,13 @@ start it again.                                                          */
   };
   const fields = $$("#apply-form [required]");
   fields.forEach((f) => {
-    f.addEventListener("blur", () => validate(f));
+    f.addEventListener("blur", () => validate(f, false));
+    // Only ever runs while a message is already showing, and only non-strict,
+    // so typing can clear an error but never raise one mid-word. (#f-course is
+    // a <select>; it fires input on change, so it needs no separate listener.)
     f.addEventListener("input", () => {
-      if ($(".err", f.closest("div").parentElement)?.textContent) validate(f);
+      if ($(".err", f.closest("div").parentElement)?.textContent)
+        validate(f, false);
     });
   });
 
@@ -304,12 +322,15 @@ start it again.                                                          */
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const ok = fields.map(validate).every(Boolean);
+    // Must stay an arrow: passing `validate` straight to filter/map hands it
+    // the array index as `strict`, and index 0 is falsy — the first field
+    // would quietly stop being required.
+    const bad = fields.filter((f) => !validate(f));
     status.classList.remove("opacity-0");
-    if (!ok) {
+    if (bad.length) {
       status.textContent = "Please fix the highlighted fields.";
       status.className = "text-body text-cyan transition-opacity duration-300";
-      fields.find((f) => !validate(f))?.focus();
+      bad[0].focus();
       return;
     }
     status.textContent = "Application received. We’ll be in touch by email.";
