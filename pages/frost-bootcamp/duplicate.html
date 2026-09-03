@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Frost — Bootcamp Test Page</title>
+    <meta
+      name="description"
+      content="Frost's bootcamp is the gate into Frost. A seven-day program of real design work, with daily critique from Frost's founder."
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Aeonik Pro is self-hosted (see assets/css/fonts.css). One preload
+         covers every weight on the page: the file is variable, 100-900. -->
+    <link
+      rel="preload"
+      href="assets/fonts/AeonikPro-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="assets/css/fonts.css" />
+    <link rel="shortcut icon" href="./assets/logo.svg" type="image/x-icon" />
+
+    <script src="assets/js/tailwind.config.js"></script>
+
+    <!-- Kept inline on purpose: the Tailwind Play CDN only compiles @layer /
+         @apply inside a <style type="text/tailwindcss"> element in the page.
+         A linked .css file is served as plain CSS and these rules would be
+         dropped. Move this out only alongside a real Tailwind build step. -->
+    <style type="text/tailwindcss">
+      @layer base {
+        body {
+          @apply bg-white font-sans antialiased text-navy;
+        }
+        /* Figma applies `font-feature-settings: "liga" 0` to body/quote copy */
+        .liga-off {
+          font-feature-settings: "liga" 0;
+        }
+      }
+      @layer components {
+        /* 100px horizontal gutter, capped at the 1920px frame width */
+        .shell {
+          @apply mx-auto w-full max-w-[120rem] px-gutter;
+        }
+        /* Section eyebrow: 16px / 700 / 1.6px tracking / uppercase */
+        .eyebrow {
+          @apply text-eyebrow font-bold uppercase;
+        }
+        /* CTA: px-24 py-16, 18px medium, uppercase */
+        .cta {
+          @apply inline-flex items-center justify-center px-6 py-4 text-nav font-medium uppercase transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4;
+        }
+        /* Track carousel state is driven by aria-current so the styling can never
+       fall out of sync with the accessibility state. #060d2a @ 10% inactive,
+       #000988 active — both straight from Figma node 704:691. */
+        .track {
+          color: rgb(6 13 42 / 0.1);
+          transition: color 0.3s ease;
+        }
+        .track:hover {
+          color: rgb(6 13 42 / 0.25);
+        }
+        .track[aria-current="true"] {
+          color: #000988;
+        }
+        /* "How to apply" step titles. Aeonik Pro is loaded as a variable font
+       (wght 100-900 — see assets/css/fonts.css), so font-weight is a real
+       animatable number here and 400 -> 700 interpolates stroke by stroke.
+       Interpolating still widens the text, though, which would push the
+       description panel for the whole 300ms, so .at-bold is a second copy
+       of the label held at 700 and never painted: it fixes the grid cell at
+       bold width, and .at-regular animates inside that fixed box. State
+       comes from aria-expanded on the parent .apply-step, as .track does
+       from aria-current. #000 @ 25% inactive, #060d2a bold active — Figma
+       node 704:757. */
+        .apply-title {
+          @apply grid whitespace-nowrap text-h2;
+        }
+        .apply-title > span {
+          grid-area: 1 / 1;
+        }
+        /* Width anchor only. visibility:hidden still reserves the box but
+       paints nothing and drops it from the accessibility tree. */
+        .apply-title > .at-bold {
+          @apply font-bold;
+          visibility: hidden;
+        }
+        .apply-title > .at-regular {
+          font-weight: 400;
+          color: rgb(0 0 0 / 0.25);
+          transition:
+            font-weight 0.3s ease,
+            color 0.3s ease;
+        }
+        .apply-step[aria-expanded="false"]:hover .at-regular {
+          color: rgb(0 0 0 / 0.5);
+        }
+        .apply-step[aria-expanded="true"] .at-regular {
+          @apply font-bold;
+          color: #060d2a;
+        }
+      }
+      @layer utilities {
+        /* Figma text-box-trim on cap/alphabetic edges */
+        .trim {
+          text-box-trim: trim-both;
+          text-box-edge: cap alphabetic;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ═══════════════════════════════════════════════════════════════════
+     NAV — node 704:628 · bg #000 · h100 · px100 py16 · gap40
+════════════════════════════════════════════════════════════════════ -->
+    <header id="top" class="sticky top-0 z-50 w-full bg-black">
+      <div
+        class="shell flex h-[72px] items-center justify-between py-4 lg:h-[100px]"
+      >
+        <a href="#top" class="shrink-0" aria-label="Frost — home">
+          <!-- logo-offset · 40×44 · node 704:629 -->
+          <img
+            src="assets/logo-offset.svg"
+            alt="Frost"
+            width="40"
+            height="40"
+            class="block h-10 w-10 mt-1"
+          />
+        </a>
+
+        <!-- pinned-nav · node 704:631 -->
+        <nav
+          aria-label="Section navigation"
+          class="hidden items-center gap-10 lg:flex"
+          id="pinned-nav"
+        >
+          <a
+            href="#intro"
+            class="nav-link flex items-center justify-center px-1 py-[1.5625rem] text-nav font-medium uppercase text-white transition-opacity !text-[1.5rem]"
+            >Intro</a
+          >
+          <a
+            href="#about"
+            class="nav-link flex items-center justify-center px-1 py-[1.5625rem] text-nav font-medium uppercase text-white transition-opacity !text-[1.5rem]"
+            >About</a
+          >
+          <a
+            href="#testimonials"
+            class="nav-link flex items-center justify-center px-1 py-[1.5625rem] text-nav font-medium uppercase text-white transition-opacity !text-[1.5rem]"
+            >Testimonials</a
+          >
+          <a
+            href="#courses"
+            class="nav-link flex items-center justify-center px-1 py-[1.5625rem] text-nav font-medium uppercase text-white transition-opacity !text-[1.5rem]"
+            >Courses</a
+          >
+          <a
+            href="#faqs"
+            class="nav-link flex items-center justify-center px-1 py-[1.5625rem] text-nav font-medium uppercase text-white transition-opacity !text-[1.5rem]"
+            >FAQs</a
+          >
+        </nav>
+
+        <div class="flex items-center gap-4">
+          <!-- cta-container · node 704:642 -->
+          <a
+            href="#courses"
+            class="cta hidden bg-cyan text-black outline-cyan sm:inline-flex"
+            >Explore the programs</a
+          >
+
+          <button
+            id="menu-btn"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            class="flex h-11 w-11 flex-col items-center justify-center gap-[6px] lg:hidden"
+            aria-label="Open menu"
+          >
+            <span
+              class="block h-[2px] w-6 bg-white transition-transform duration-300"
+            ></span>
+            <span
+              class="block h-[2px] w-6 bg-white transition-opacity duration-300"
+            ></span>
+            <span
+              class="block h-[2px] w-6 bg-white transition-transform duration-300"
+            ></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile drawer -->
+      <nav
+        id="mobile-nav"
+        aria-label="Mobile navigation"
+        class="grid grid-rows-[0fr] overflow-hidden bg-black transition-all duration-300 lg:hidden"
+      >
+        <div class="min-h-0">
+          <ul class="shell flex flex-col gap-1 pb-8 pt-2">
+            <li>
+              <a
+                href="#intro"
+                class="block py-3 text-nav font-medium uppercase text-white/70"
+                >Intro</a
+              >
+            </li>
+            <li>
+              <a
+                href="#about"
+                class="block py-3 text-nav font-medium uppercase text-white/70"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                href="#testimonials"
+                class="block py-3 text-nav font-medium uppercase text-white/70"
+                >Testimonials</a
+              >
+            </li>
+            <li>
+              <a
+                href="#courses"
+                class="block py-3 text-nav font-medium uppercase text-white/70"
+                >Courses</a
+              >
+            </li>
+            <li>
+              <a
+                href="#faqs"
+                class="block py-3 text-nav font-medium uppercase text-white/70"
+                >FAQs</a
+              >
+            </li>
+            <li class="pt-4">
+              <a href="#apply" class="cta w-full bg-cyan text-black"
+                >Apply now</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ═══════════════════════════════════════════════════════════════════
+     HERO — node 704:645 · bg #000 · h1346 · pt100 pb200
+     Title 200/700/.87/-6px · rgba(255,255,255,.9) · 3 lines justify-between
+     BG asset bleeds below the section (top 526, h 932) into the next
+     black section — reproduced with overflow-visible, exactly as Figma.
+════════════════════════════════════════════════════════════════════ -->
+      <section
+        id="intro"
+        class="relative min-h-[clamp(28rem,70.1vw,84.13rem)] bg-black pb-[clamp(6rem,10.42vw,12.5rem)] pt-[clamp(3rem,5.21vw,6.25rem)]"
+      >
+        <div class="shell relative z-20">
+          <h1
+            class="flex min-h-[clamp(14rem,28.9vw,34.7rem)] flex-col items-center justify-between text-display font-bold text-white/90"
+          >
+            <span class="block text-center lg:whitespace-nowrap"
+              >THE HARDEST</span
+            >
+            <span class="block text-center lg:whitespace-nowrap"
+              >FREE PROGRAM</span
+            >
+            <span class="block text-center uppercase lg:whitespace-nowrap"
+              >you'll ever take</span
+            >
+          </h1>
+        </div>
+        <!-- tools black BG transparent 1 · node 704:650 · 1920×932 @ y526 (bleeds past the section, as in Figma) -->
+        <img
+          src="assets/hero-tools.png"
+          alt=""
+          width="3002"
+          height="1457"
+          fetchpriority="high"
+          class="pointer-events-none absolute left-0 top-[39%] z-20 h-[clamp(18rem,48.5vw,58.25rem)] w-full max-w-none object-cover object-center select-none"
+        />
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     WHAT THIS IS — node 704:651 · bg #000 · px100 py150 · gap40
+     h1 100px/-2px · 3 columns gap120 · body 18/1.4/-0.36 · opacity .8
+════════════════════════════════════════════════════════════════════ -->
+      <section id="about" class="relative z-20 bg-black py-block text-white">
+        <div class="shell flex flex-col gap-10">
+          <div class="flex flex-col gap-8" data-reveal>
+            <p class="eyebrow opacity-50">What this is</p>
+            <h2 class="text-h1">
+              <span class="font-bold"
+                >Our bootcamp is the gate into Frost.</span
+              >
+              <!-- <span class="font-bold text-smoke">ost.</span> -->
+              <span class=""> It's how we pick talent. </span>
+              <span class="">
+                It's a seven-day program of real design work that tells us more
+                about a designer than any interview could.
+              </span>
+            </h2>
+          </div>
+
+          <div
+            class="grid grid-cols-1 gap-10 !text-[1.5rem] text-body !opacity-80 md:grid-cols-2 lg:grid-cols-3 lg:gap-[clamp(2.5rem,6.25vw,7.5rem)]"
+            data-reveal
+          >
+            <p>
+              We teach you the
+              <strong class="font-bold"
+                >rigor of how design is actually done at production
+                scale.</strong
+              >
+              No gatekeeping, no trend-chasing. These are fundamentals that last
+              a career.
+            </p>
+            <p>
+              All programs follow the same structure:
+              <strong class="font-bold"
+                >a lesson with a daily assignment; we go through everyone's work
+                and give direct critique; you revise and apply the
+                feedback.</strong
+              >
+              We repeat until the program ends.
+            </p>
+            <p class="font-bold md:col-span-2 lg:col-span-1">
+              The true value of this program is the daily critique most
+              designers never get from anyone at this level.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     STATS — node 704:659 · bg #000 · p100 · justify-between
+     number 96/700/-2.88px · label 24/1.4/-0.48px opacity .8
+════════════════════════════════════════════════════════════════════ -->
+      <section class="bg-black py-[clamp(3rem,5.21vw,6.25rem)] text-white">
+        <!-- stat-container h138: Figma trims the label's leading (text-box-trim), which
+       Chromium doesn't yet honour — the fixed height reproduces the same optical box. -->
+        <dl
+          class="shell grid grid-cols-2 gap-x-8 gap-y-12 lg:flex lg:items-start lg:justify-between"
+        >
+          <div
+            class="flex flex-col items-center justify-center gap-3 lg:h-[8.625rem]"
+            data-reveal
+          >
+            <dt class="order-2 trim text-stat-l opacity-80">
+              Total Applicants
+            </dt>
+            <dd
+              class="order-1 text-stat font-bold"
+              data-count="3200"
+              data-suffix="+"
+            >
+              3,200+
+            </dd>
+          </div>
+          <div
+            class="flex flex-col items-center justify-center gap-3 lg:h-[8.625rem]"
+            data-reveal
+          >
+            <dt class="order-2 trim text-stat-l opacity-80">
+              Empowered Graduates
+            </dt>
+            <dd
+              class="order-1 text-stat font-bold"
+              data-count="470"
+              data-suffix="+"
+            >
+              470+
+            </dd>
+          </div>
+          <div
+            class="flex flex-col items-center justify-center gap-3 lg:h-[8.625rem]"
+            data-reveal
+          >
+            <dt class="order-2 trim text-stat-l opacity-80">
+              Bootcamps Since 2024
+            </dt>
+            <dd class="order-1 text-stat font-bold" data-count="10">10</dd>
+          </div>
+          <div
+            class="flex flex-col items-center justify-center gap-3 lg:h-[8.625rem]"
+            data-reveal
+          >
+            <dt class="order-2 trim text-stat-l opacity-80">
+              Student Satisfaction
+            </dt>
+            <dd
+              class="order-1 text-stat font-bold"
+              data-count="98"
+              data-suffix="%"
+            >
+              98%
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     TESTIMONIAL — node 704:672 · linear-gradient(to top, #010987, #000)
+     pt150 pb200 · gap32 · content gap120 h489
+════════════════════════════════════════════════════════════════════ -->
+      <section
+        id="testimonials"
+        class="bg-gradient-to-t from-blue-lt to-black pb-[clamp(6rem,10.42vw,12.5rem)] pt-block text-white"
+      >
+        <div class="shell flex flex-col gap-8">
+          <p class="eyebrow opacity-50">Don't take it from us</p>
+
+          <figure
+            class="relative flex flex-col gap-10 lg:min-h-[489px] lg:flex-row lg:gap-[clamp(2.5rem,6.25vw,7.5rem)]"
+            data-reveal
+          >
+            <!-- left-column · node 704:676 · w612 -->
+            <div class="lg:w-[36%] lg:max-w-[38.25rem] lg:shrink-0">
+              <p class="trim max-w-[25ch] text-lead opacity-80">
+                Real feedback from people who went through it.
+              </p>
+            </div>
+
+            <!-- quote mark · node 704:684 · 43×30 @ x650 y17 -->
+            <img
+              src="assets/quote-left.svg"
+              alt=""
+              width="43"
+              height="30"
+              class="pointer-events-none hidden h-[1.875rem] w-[2.6875rem] shrink-0 lg:absolute lg:left-[38%] lg:top-[1.0625rem] lg:block"
+            />
+
+            <blockquote class="flex flex-1 flex-col justify-between gap-10">
+              <div class="flex flex-col gap-10">
+                <p class="text-h3 font-medium max-w-[23ch]">
+                  The personalized feedback and best practices helped me improve
+                  my design process and grow as a designer.
+                </p>
+                <p class="trim max-w-[50ch] text-body opacity-80">
+                  Every critique was actionable and gave me a clearer
+                  understanding of how to create better work. I'm grateful to be
+                  part of the bootcamp and motivated to keep improving every
+                  step of the way.
+                </p>
+              </div>
+              <figcaption class="text-sub leading-[1.5] liga-off">
+                - Angelie Badar
+              </figcaption>
+            </blockquote>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     THE TRACKS — node 704:686 · bg #fff · h1466 · pt200 pb150 · overflow-clip
+     Carousel: active track #000988, neighbours #060d2a @ 10% bleeding
+     off both edges. Track band 200/700/.87/-6px uppercase, gap80,
+     cross-pattern separators 45×45. BG asset @ y149 h865.
+════════════════════════════════════════════════════════════════════ -->
+      <section
+        id="courses"
+        class="relative flex min-h-[clamp(38rem,76.35vw,91.6rem)] flex-col justify-between overflow-hidden bg-white pb-block pt-[clamp(6rem,10.42vw,12.5rem)] gap-20"
+      >
+        <div class="shell relative z-20">
+          <p class="eyebrow text-navy/50">The tracks</p>
+        </div>
+
+        <!-- Rectangle 3476455 · node 704:705 · 1920×865 @ y149 -->
+        <img
+          src="assets/tracks-bg.png"
+          alt="A spotlight, sphere and paintbrush rendered in 3D"
+          width="2038"
+          height="989"
+          class="pointer-events-none absolute left-0 top-[12.1668%] z-30 w-full max-w-none object-contain object-center select-none"
+        />
+
+        <div
+          class="relative z-20 flex flex-col items-center gap-12"
+          data-reveal
+        >
+          <!-- tracks-container · node 704:691 -->
+          <div
+            class="w-full overflow-hidden"
+            role="group"
+            aria-label="Design tracks"
+          >
+            <ul
+              id="track-band"
+              class="flex items-center justify-center gap-[clamp(1.5rem,4.17vw,5rem)] transition-transform duration-500"
+            >
+              <li class="shrink-0">
+                <button
+                  type="button"
+                  data-track="UI Design"
+                  data-desc="The craft of interface design: structure, hierarchy and the systems behind them."
+                  class="track whitespace-nowrap text-display font-bold uppercase"
+                >
+                  UI&nbsp;Design
+                </button>
+              </li>
+              <li class="shrink-0" aria-hidden="true">
+                <img
+                  src="assets/cross-pattern.svg"
+                  alt=""
+                  width="45"
+                  height="45"
+                  class="h-[clamp(1.25rem,2.34vw,2.813rem)] w-[clamp(1.25rem,2.34vw,2.813rem)]"
+                />
+              </li>
+              <li class="shrink-0">
+                <button
+                  type="button"
+                  data-track="Rendering"
+                  data-desc="The art of rendering: turning data into pixels, one frame at a time."
+                  aria-current="true"
+                  class="track whitespace-nowrap text-display font-bold uppercase"
+                >
+                  Rendering
+                </button>
+              </li>
+              <li class="shrink-0" aria-hidden="true">
+                <img
+                  src="assets/cross-pattern.svg"
+                  alt=""
+                  width="45"
+                  height="45"
+                  class="h-[clamp(1.25rem,2.34vw,2.813rem)] w-[clamp(1.25rem,2.34vw,2.813rem)]"
+                />
+              </li>
+              <li class="shrink-0">
+                <button
+                  type="button"
+                  data-track="Visual UI"
+                  data-desc="Visual craft at production scale: type, colour, spacing and polish."
+                  class="track whitespace-nowrap text-display font-bold uppercase"
+                >
+                  Visual&nbsp;UI
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <p
+            id="track-desc"
+            class="trim max-w-[32ch] px-6 text-center text-sub text-graphite opacity-80"
+          >
+            The art of rendering: turning data into pixels, one frame at a time.
+          </p>
+
+          <a
+            href="#apply"
+            id="track-cta"
+            class="cta bg-black text-white outline-black"
+            >Apply for Rendering</a
+          >
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     WHAT WE EXPECT — node 704:706 · bg #fff · h989
+     left 968 (px100 py150, justify-between) · right video-asset 952
+════════════════════════════════════════════════════════════════════ -->
+      <section class="bg-white">
+        <div
+          class="mx-auto grid w-full max-w-[1920px] grid-cols-1 lg:min-h-[989px] lg:grid-cols-[968fr_952fr]"
+        >
+          <div class="flex flex-col justify-between gap-16 px-gutter py-block">
+            <div class="flex flex-col gap-6" data-reveal>
+              <p class="eyebrow text-black/50">What we expect from you</p>
+              <h2 class="max-w-[10ch] text-h2 text-black">
+                <span class="block font-bold">Commitment.</span>
+                <span class="block">That's the entrance fee.</span>
+              </h2>
+            </div>
+            <p
+              class="trim max-w-[40ch] text-body text-black !opacity-80"
+              data-reveal
+            >
+              Roughly half of every cohort finishes. Sessions are always
+              recorded, so anyone can review and catch up. Keep in mind:
+              <strong class="font-bold">this is a class, not a webinar.</strong>
+            </p>
+          </div>
+
+          <!-- video-asset · node 704:712 · 952×989
+         The reel is a 848×496 screen recording of a critique session, so it is
+         letterboxed with object-contain on the dark panel rather than cropped to
+         the 952×989 frame — object-cover would cut ~44% of the screen width and
+         lose the work being reviewed. The panel gradient is kept as the ground. -->
+          <div
+            class="group relative min-h-[320px] overflow-hidden bg-ink lg:min-h-0"
+          >
+            <div
+              class="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_0%,#2a3050_0%,#0c0f1f_70%)]"
+            ></div>
+            <video
+              id="cohort-reel"
+              class="absolute inset-0 h-full w-full object-contain"
+              poster="assets/video-asset-poster.jpg"
+              preload="metadata"
+              playsinline
+              muted
+            >
+              <source src="assets/video-asset.mp4" type="video/mp4" />
+            </video>
+            <button
+              id="reel-toggle"
+              type="button"
+              aria-label="Play cohort reel"
+              aria-controls="cohort-reel"
+              class="absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-black/40 opacity-0 backdrop-blur transition duration-300 group-hover:scale-110 group-hover:opacity-100 focus-visible:opacity-100"
+            >
+              <svg
+                class="reel-play"
+                viewBox="0 0 24 24"
+                width="28"
+                height="28"
+                fill="white"
+                aria-hidden="true"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <svg
+                class="reel-pause hidden"
+                viewBox="0 0 24 24"
+                width="28"
+                height="28"
+                fill="white"
+                aria-hidden="true"
+              >
+                <path d="M7 5h4v14H7zm6 0h4v14h-4z" />
+              </svg>
+            </button>
+            <p
+              class="absolute bottom-8 left-8 text-flabel font-medium uppercase tracking-[0.1em] text-white/50"
+            >
+              Cohort reel
+            </p>
+            <!-- Sound stays visible rather than hiding with the play control:
+           autoplay is forced to start muted, so this doubles as the only cue
+           that the reel has an audio track at all. -->
+            <button
+              id="reel-sound"
+              type="button"
+              aria-label="Unmute cohort reel"
+              aria-controls="cohort-reel"
+              class="absolute bottom-8 right-8 flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-black/40 backdrop-blur transition duration-300 hover:scale-110"
+            >
+              <svg
+                class="reel-muted"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+              >
+                <path d="M11 5 6 9H2v6h4l5 4z" fill="white" />
+                <path
+                  d="M16 9.5 21 15M21 9.5 16 15"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+              </svg>
+              <svg
+                class="reel-unmuted hidden"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+              >
+                <path d="M11 5 6 9H2v6h4l5 4z" fill="white" />
+                <path
+                  d="M15.5 8.8a4.5 4.5 0 0 1 0 6.4M18.6 5.7a9 9 0 0 1 0 12.6"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     GETTING INTO FROST — node 704:713 · bg #fafafa · px100 py150 · gap32
+     content gap140 · steps gap60, each gap30, tag 49×49 r24.5 #1c2139
+════════════════════════════════════════════════════════════════════ -->
+      <section class="bg-off py-block">
+        <div class="shell flex flex-col gap-8">
+          <p class="eyebrow text-navy/50">Getting into Frost</p>
+
+          <div class="flex flex-col gap-[clamp(3.5rem,7.29167vw,8.75rem)]">
+            <div class="flex flex-col gap-10 text-navy" data-reveal>
+              <h2 class="max-w-[20ch] text-h2">
+                <span class="block">We hire from every</span>
+                <span class="block"
+                  >cohort.
+                  <strong class="font-bold"
+                    >Finishing doesn't guarantee an offer</strong
+                  ></span
+                >
+              </h2>
+              <p class="trim max-w-[44ch] text-body opacity-80">
+                Once you're in, you'll receive additional training to ensure
+                your readiness. Before anyone touches client work, they pass
+                through <strong class="font-bold">Gate One</strong> — our
+                internal production certification.
+              </p>
+            </div>
+
+            <ol
+              class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 lg:gap-[clamp(2rem,3.13vw,3.75rem)]"
+            >
+              <li class="flex gap-[30px]" data-reveal>
+                <span
+                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white pt-[1rem] pr-[0.75rem] pb-[1.0625rem] pl-[0.8125rem]"
+                  aria-hidden="true"
+                  >01</span
+                >
+                <div class="flex flex-col gap-[25px] pt-4 text-navy">
+                  <h3 class="trim text-sub font-bold opacity-80">Prove it</h3>
+                  <p class="trim text-body opacity-80 max-w-[30ch]">
+                    We gauge how you take feedback, follow through, and apply it
+                    to your work.
+                  </p>
+                </div>
+              </li>
+              <li class="flex gap-[30px]" data-reveal>
+                <span
+                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white pt-[1rem] pr-[0.75rem] pb-[1.0625rem] pl-[0.8125rem]"
+                  aria-hidden="true"
+                  >02</span
+                >
+                <div class="flex flex-col gap-[25px] pt-4 text-ink">
+                  <h3 class="trim text-sub font-bold opacity-80">
+                    Get noticed
+                  </h3>
+                  <p class="trim text-body opacity-80 max-w-[36ch]">
+                    Standouts move to follow-through conversations with our
+                    team, then into our talent pool.
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex gap-[30px] md:col-span-2 lg:col-span-1"
+                data-reveal
+              >
+                <span
+                  class="flex h-[49px] w-[49px] shrink-0 items-center justify-center font-manrope rounded-full bg-ink text-sub font-bold text-white pt-[1rem] pr-[0.75rem] pb-[1.0625rem] pl-[0.8125rem]"
+                  aria-hidden="true"
+                  >03</span
+                >
+                <div class="flex flex-col gap-[25px] pt-4 text-ink">
+                  <h3 class="trim text-sub font-bold opacity-80">Get placed</h3>
+                  <p class="trim text-body opacity-80 max-w-[38ch]">
+                    Based on those conversations, we offer an engagement —
+                    full-time, project-based, or fractional.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     YOUR INSTRUCTOR — node 704:738 · bg #000988 · px100 py150 · gap192
+     image 499×536 @ x80 y150 · content 992 gap120 · 2 cols gap120
+════════════════════════════════════════════════════════════════════ -->
+      <section class="overflow-hidden bg-blue py-block text-white">
+        <div
+          class="mx-auto grid w-full max-w-[1920px] grid-cols-1 items-start gap-12 px-gutter lg:grid-cols-[499fr_992fr] lg:gap-[clamp(3rem,10vw,12rem)]"
+        >
+          <!-- #image · node 704:746 -->
+          <img
+            src="assets/instructor.jpg"
+            alt="John Paul de Guzman, founder and Chief Creative Officer of Frost"
+            width="1842"
+            height="2304"
+            class="h-[clamp(20rem,27.9vw,33.5rem)] w-full max-w-[499px] object-cover"
+          />
+
+          <div class="flex flex-col gap-12 lg:gap-[clamp(3rem,6.25vw,7.5rem)]">
+            <div class="flex flex-col gap-8" data-reveal>
+              <p class="eyebrow text-white/50">Your Instructor</p>
+              <h2 class="text-h2">
+                The bootcamp program is taught by
+                <strong class="font-bold">John Paul de Guzman</strong>, Frost's
+                founder and Chief Creative Officer
+              </h2>
+            </div>
+            <div
+              class="grid grid-cols-1 gap-10 text-body md:grid-cols-2 lg:gap-[clamp(2.5rem,6.25vw,7.5rem)]"
+              data-reveal
+            >
+              <p class="trim max-w-[424px] opacity-80">
+                John Paul de Guzman is the founder and Chief Creative Officer of
+                Frost. He's spent over a decade building design teams and
+                shipping production work for some of the country's largest
+                digital products, and started Frost to close the gap between
+                what design schools teach and what the job actually demands.
+              </p>
+              <p class="trim max-w-[424px] opacity-80">
+                He leads every bootcamp cohort personally — not because Frost
+                can't scale, but because he believes the daily critique is the
+                entire point. Outside of Frost, he mentors early-career
+                designers and writes occasionally about design systems and
+                creative leadership.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     WHO SHOULD JOIN — node 704:747 · h887 · px100 py150 · gap32
+════════════════════════════════════════════════════════════════════ -->
+      <section class="bg-white py-block">
+        <!-- inner block = 587px so section total lands on Figma's 887px (150 + 587 + 150) -->
+        <div
+          class="shell flex min-h-[clamp(16rem,30.57vw,36.69rem)] flex-col gap-8"
+        >
+          <p class="eyebrow text-steel">who should join</p>
+          <div class="flex flex-1 flex-col justify-between gap-12">
+            <h2 class="max-w-[1233px] text-h2 text-navy" data-reveal>
+              You don't need a design degree. You need a foundation and the
+              <strong class="font-bold"
+                >willingness to be critiqued daily</strong
+              >
+            </h2>
+            <p class="trim max-w-[50ch] text-body text-black" data-reveal>
+              Our participants come from IT, development, graphic design, web
+              design, and solo roles where no one senior ever reviewed their
+              work. Each track page tells you who it fits.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     HOW TO APPLY — node 704:753 · bg #fff · px100 py150 · gap81
+     content gap113 · image 388×480 · rows h96, gap32
+     Row 1 active (100%), rows 2–4 at 50% with collapsed descriptions.
+════════════════════════════════════════════════════════════════════ -->
+      <section class="bg-white py-block overflow-x-hidden">
+        <div class="shell flex flex-col gap-10 lg:flex-row lg:gap-[5.0625rem]">
+          <h2 class="eyebrow shrink-0 text-black/50 font-manrope">
+            How to apply
+          </h2>
+
+          <div
+            class="flex flex-1 flex-col items-center gap-10 lg:flex-row lg:gap-[clamp(3rem,5.8854167vw,7.06rem)]"
+          >
+            <!-- #image · node 704:756 -->
+            <img
+              src="assets/apply.png"
+              alt="A designer at work"
+              width="1856"
+              height="2304"
+              class="h-[clamp(16rem,25vw,30rem)] w-full max-w-[388px] shrink-0 object-cover lg:self-stretch lg:h-auto"
+            />
+
+            <!-- steps-container · node 704:757 -->
+            <ol id="apply-steps" class="flex w-full flex-1 flex-col gap-8">
+              <li>
+                <button
+                  type="button"
+                  class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
+                  aria-expanded="true"
+                >
+                  <span class="apply-title">
+                    <span class="at-regular">Apply</span>
+                    <span class="at-bold" aria-hidden="true">Apply</span>
+                  </span>
+                  <span
+                    class="apply-panel grid flex-1 grid-rows-[1fr] overflow-hidden transition-all duration-300 lg:h-full"
+                  >
+                    <span
+                      class="flex min-h-0 flex-col items-start gap-2 text-body opacity-100 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
+                    >
+                      <span class="max-w-[22ch] text-black opacity-80 liga-off"
+                        >Submit your portfolio and tell us what you're building
+                        toward.</span
+                      >
+                      <span
+                        class="shrink-0 whitespace-nowrap text-steel opacity-80 liga-off"
+                        >5 minutes</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </li>
+
+              <li>
+                <button
+                  type="button"
+                  class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
+                  aria-expanded="false"
+                >
+                  <span class="apply-title">
+                    <span class="at-regular">Screening</span>
+                    <span class="at-bold" aria-hidden="true">Screening</span>
+                  </span>
+                  <span
+                    class="apply-panel grid flex-1 grid-rows-[0fr] overflow-hidden transition-all duration-300 lg:h-full"
+                  >
+                    <span
+                      class="flex min-h-0 flex-col items-start gap-2 text-body opacity-0 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
+                    >
+                      <span class="max-w-[222px] text-deep opacity-80 liga-off"
+                        >Tell us about yourself and your interest in
+                        design.</span
+                      >
+                      <span
+                        class="w-[77px] shrink-0 text-slate opacity-50 liga-off"
+                        >5 minutes</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </li>
+
+              <li>
+                <button
+                  type="button"
+                  class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
+                  aria-expanded="false"
+                >
+                  <span class="apply-title">
+                    <span class="at-regular">Initial Interview</span>
+                    <span class="at-bold" aria-hidden="true"
+                      >Initial Interview</span
+                    >
+                  </span>
+                  <span
+                    class="apply-panel grid flex-1 grid-rows-[0fr] overflow-hidden transition-all duration-300 lg:h-full"
+                  >
+                    <span
+                      class="flex min-h-0 flex-col items-start gap-2 text-body opacity-0 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
+                    >
+                      <span class="max-w-[222px] text-deep opacity-80 liga-off"
+                        >Meet the team, share your ideas, and see if we're a
+                        good fit.</span
+                      >
+                      <span
+                        class="w-[77px] shrink-0 text-slate opacity-50 liga-off"
+                        >9 minutes</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </li>
+
+              <li>
+                <button
+                  type="button"
+                  class="apply-step group flex w-full flex-col items-start gap-4 text-left lg:min-h-[96px] lg:flex-row lg:items-start lg:justify-between"
+                  aria-expanded="false"
+                >
+                  <span class="apply-title">
+                    <span class="at-regular">Get Your Invite</span>
+                    <span class="at-bold" aria-hidden="true"
+                      >Get Your Invite</span
+                    >
+                  </span>
+                  <span
+                    class="apply-panel grid flex-1 grid-rows-[0fr] overflow-hidden transition-all duration-300 lg:h-full"
+                  >
+                    <span
+                      class="flex min-h-0 flex-col items-start gap-2 text-body opacity-0 transition-opacity duration-300 lg:h-full lg:flex-row lg:items-center lg:justify-end lg:gap-16"
+                    >
+                      <span class="max-w-[222px] text-deep opacity-80 liga-off"
+                        >Receive your invitation and take the next step toward
+                        joining the team.</span
+                      >
+                      <span
+                        class="w-[77px] shrink-0 text-slate opacity-50 liga-off"
+                        >5 minutes</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     FAQ — node 704:778 · bg #fafafa · px100 py150 · gap32
+     content gap48 · items gap24 · border-b rgba(0,0,0,.2)
+     question 24/500/1.15/-0.48 · answer 18/1.4 opacity .8 · chevron 32×34
+════════════════════════════════════════════════════════════════════ -->
+      <section id="faqs" class="bg-off py-block">
+        <div class="shell flex flex-col gap-8">
+          <p class="eyebrow text-navy/50">Frequently asked questions</p>
+
+          <div class="flex flex-col gap-12">
+            <h2 class="text-h2 text-navy">
+              <span>Before you </span><strong class="font-bold">apply</strong>
+            </h2>
+
+            <div id="faq" class="flex flex-col gap-6">
+              <div class="faq-item border-b border-black/20 pb-6">
+                <h3>
+                  <button
+                    type="button"
+                    class="faq-trigger flex w-full items-start justify-between gap-6 text-left"
+                    aria-expanded="false"
+                  >
+                    <span
+                      class="max-w-[560px] py-1.5 text-q font-medium text-navy liga-off"
+                      >I applied. What happens next?</span
+                    >
+                    <img
+                      src="assets/chevron.svg"
+                      alt=""
+                      width="32"
+                      height="34"
+                      class="faq-icon h-[34px] w-8 shrink-0 rotate-180 transition-transform duration-300"
+                    />
+                  </button>
+                </h3>
+                <div
+                  class="faq-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
+                >
+                  <div class="overflow-hidden">
+                    <p
+                      class="max-w-[54ch] pt-6 text-body text-navy opacity-80 liga-off"
+                    >
+                      Four steps: application → design test → bootcamp
+                      invitation → talent pool. The design test tells us where
+                      you are; the bootcamp shows us how you work.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="faq-item border-b border-black/20 pb-6">
+                <h3>
+                  <button
+                    type="button"
+                    class="faq-trigger flex w-full items-start justify-between gap-6 text-left"
+                    aria-expanded="false"
+                  >
+                    <span
+                      class="max-w-[860px] py-1.5 text-q font-medium text-navy liga-off"
+                      >I applied for a job posting. Why did I get a bootcamp
+                      invite instead of an interview?</span
+                    >
+                    <img
+                      src="assets/chevron.svg"
+                      alt=""
+                      width="32"
+                      height="34"
+                      class="faq-icon h-[34px] w-8 shrink-0 rotate-180 transition-transform duration-300"
+                    />
+                  </button>
+                </h3>
+                <div
+                  class="faq-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
+                >
+                  <div class="overflow-hidden">
+                    <p
+                      class="max-w-[625px] pt-6 text-body text-navy opacity-80 liga-off"
+                    >
+                      Because we'd rather see how you work than read about it.
+                      The bootcamp is how we evaluate designers — the invite is
+                      a step forward, not a redirect.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="faq-item border-b border-black/20 pb-6">
+                <h3>
+                  <button
+                    type="button"
+                    class="faq-trigger flex w-full items-start justify-between gap-6 text-left"
+                    aria-expanded="false"
+                  >
+                    <span
+                      class="max-w-[560px] py-1.5 text-q font-medium text-navy liga-off"
+                      >Is the bootcamp a job interview?</span
+                    >
+                    <img
+                      src="assets/chevron.svg"
+                      alt=""
+                      width="32"
+                      height="34"
+                      class="faq-icon h-[34px] w-8 shrink-0 rotate-180 transition-transform duration-300"
+                    />
+                  </button>
+                </h3>
+                <div
+                  class="faq-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
+                >
+                  <div class="overflow-hidden">
+                    <p
+                      class="max-w-[625px] pt-6 text-body text-navy opacity-80 liga-off"
+                    >
+                      It's how we hire, but finishing doesn't guarantee an
+                      offer. We hire from every cohort based on how you take
+                      feedback and follow through.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="faq-item border-b border-black/20 pb-6">
+                <h3>
+                  <button
+                    type="button"
+                    class="faq-trigger flex w-full items-start justify-between gap-6 text-left"
+                    aria-expanded="false"
+                  >
+                    <span
+                      class="max-w-[560px] py-1.5 text-q font-medium text-navy liga-off"
+                      >Is everyone accepted into the bootcamp?</span
+                    >
+                    <img
+                      src="assets/chevron.svg"
+                      alt=""
+                      width="32"
+                      height="34"
+                      class="faq-icon h-[34px] w-8 shrink-0 rotate-180 transition-transform duration-300"
+                    />
+                  </button>
+                </h3>
+                <div
+                  class="faq-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
+                >
+                  <div class="overflow-hidden">
+                    <p
+                      class="max-w-[625px] pt-6 text-body text-navy opacity-80 liga-off"
+                    >
+                      No. Applications go through a design test first, and seats
+                      per cohort are limited.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="faq-item border-b border-black/20 pb-6">
+                <h3>
+                  <button
+                    type="button"
+                    class="faq-trigger flex w-full items-start justify-between gap-6 text-left"
+                    aria-expanded="false"
+                  >
+                    <span
+                      class="max-w-[560px] py-1.5 text-q font-medium text-navy liga-off"
+                      >When are the live sessions? I have a full-time job.</span
+                    >
+                    <img
+                      src="assets/chevron.svg"
+                      alt=""
+                      width="32"
+                      height="34"
+                      class="faq-icon h-[34px] w-8 shrink-0 rotate-180 transition-transform duration-300"
+                    />
+                  </button>
+                </h3>
+                <div
+                  class="faq-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
+                >
+                  <div class="overflow-hidden">
+                    <p
+                      class="max-w-[625px] pt-6 text-body text-navy opacity-80 liga-off"
+                    >
+                      Every session is recorded, so you can review and catch up.
+                      Keep in mind this is a class, not a webinar — the daily
+                      critique is the point.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+     APPLY NOW — node 704:815 · bg #000 · px100 py150 · gap81
+     Title 200/700/leading-none/-6px uppercase w733
+     Form gap48 · field: label 14 #71839d, input border-b white h50, 16 white
+     CTA #0ff w186 · label #0a143f
+════════════════════════════════════════════════════════════════════ -->
+      <section id="apply" class="bg-black py-block text-white">
+        <div class="shell flex flex-col gap-12 lg:flex-row lg:gap-[5.0625rem]">
+          <h2
+            class="w-full shrink-0 text-display font-bold uppercase leading-none lg:max-w-[45.8125rem]"
+          >
+            <span class="block">Apply</span>
+            <span class="block">Now</span>
+          </h2>
+
+          <form
+            id="apply-form"
+            novalidate
+            class="flex w-full flex-1 flex-col gap-12"
+          >
+            <div class="flex flex-col gap-12 sm:flex-row sm:gap-12">
+              <!-- Form Field · node 704:819 -->
+              <div class="flex flex-1 flex-col">
+                <label
+                  for="f-name"
+                  class="pl-0.5 text-flabel font-medium text-slate"
+                  >Complete Name *</label
+                >
+                <div
+                  class="flex h-[50px] items-center border-b border-white pb-[14px] pt-4 transition-colors focus-within:border-cyan"
+                >
+                  <input
+                    id="f-name"
+                    name="name"
+                    type="text"
+                    required
+                    aria-describedby="e-name"
+                    autocomplete="name"
+                    placeholder="Juan Dela Cruz"
+                    class="w-full bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
+                  />
+                </div>
+                <p
+                  id="e-name"
+                  class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
+                ></p>
+              </div>
+
+              <!-- Form Field · node 704:820 (with helper text) -->
+              <div class="flex flex-1 flex-col">
+                <label
+                  for="f-email"
+                  class="pl-0.5 text-flabel font-medium text-slate"
+                  >Email*</label
+                >
+                <div
+                  class="flex h-[50px] items-center border-b border-white pb-[14px] pt-4 transition-colors focus-within:border-cyan"
+                >
+                  <input
+                    id="f-email"
+                    name="email"
+                    type="email"
+                    required
+                    aria-describedby="h-email e-email"
+                    autocomplete="email"
+                    placeholder="juandelacruz@gmail.com"
+                    class="w-full bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
+                  />
+                </div>
+                <!-- <div class="h-2" aria-hidden="true"></div> -->
+                <p
+                  id="h-email"
+                  class="px-0.5 text-hint font-medium text-white opacity-50 pt-2"
+                >
+                  We'll send your application status here.
+                </p>
+                <p
+                  id="e-email"
+                  class="err mt-1 hidden px-0.5 text-hint font-medium text-cyan"
+                ></p>
+              </div>
+            </div>
+
+            <!-- Form Field · node 704:821 (select) -->
+            <div class="flex flex-col">
+              <label
+                for="f-course"
+                class="pl-0.5 text-flabel font-medium text-slate"
+                >Which course would you like to be part of? *</label
+              >
+              <div
+                class="relative flex h-[50px] items-center border-b border-white pb-[14px] pt-4 transition-colors focus-within:border-cyan"
+              >
+                <select
+                  id="f-course"
+                  name="course"
+                  required
+                  aria-describedby="e-course"
+                  class="w-full appearance-none bg-transparent pr-8 pt-0.5 text-field font-medium leading-[1.1] text-white outline-none [&amp;>option]:bg-black"
+                >
+                  <option value="" disabled selected>Visual Designer</option>
+                  <option value="ui-design">UI Design</option>
+                  <option value="rendering">Rendering</option>
+                  <option value="visual-ui">Visual UI</option>
+                </select>
+                <img
+                  src="assets/chevron-down.svg"
+                  alt=""
+                  width="24"
+                  height="24"
+                  class="pointer-events-none absolute right-0 h-6 w-6"
+                />
+              </div>
+              <p
+                id="e-course"
+                class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
+              ></p>
+            </div>
+
+            <!-- Form Field · node 704:822 -->
+            <div class="flex flex-col">
+              <label
+                for="f-portfolio"
+                class="pl-0.5 text-flabel font-medium text-slate"
+                >Portfolio link or file *</label
+              >
+              <div
+                class="flex h-[50px] items-center border-b border-white pb-[14px] pt-4 transition-colors focus-within:border-cyan"
+              >
+                <input
+                  id="f-portfolio"
+                  name="portfolio"
+                  type="url"
+                  required
+                  aria-describedby="e-portfolio"
+                  placeholder="juan-portfolio.com"
+                  class="w-full bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
+                />
+              </div>
+              <p
+                id="e-portfolio"
+                class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
+              ></p>
+            </div>
+
+            <!-- Form Field · node 704:823 -->
+            <div class="flex flex-col">
+              <label
+                for="f-why"
+                class="pl-0.5 text-flabel font-medium text-slate"
+                >Why do you want to join? *</label
+              >
+              <div
+                class="flex min-h-[50px] items-center border-b border-white pb-[14px] pt-4 transition-colors focus-within:border-cyan"
+              >
+                <textarea
+                  id="f-why"
+                  name="why"
+                  required
+                  aria-describedby="e-why"
+                  rows="1"
+                  placeholder="Tell us a bit what you’re hoping to get out of the program."
+                  class="w-full resize-none bg-transparent pt-0.5 text-field font-medium text-white outline-none placeholder:text-white/40"
+                ></textarea>
+              </div>
+              <p
+                id="e-why"
+                class="err mt-2 hidden px-0.5 text-hint font-medium text-cyan"
+              ></p>
+            </div>
+
+            <!-- cta · node 704:824 · w186 -->
+            <div class="flex flex-wrap items-center gap-4">
+              <button
+                type="submit"
+                class="cta w-[186px] bg-cyan text-deep outline-cyan"
+              >
+                Submit
+              </button>
+              <p
+                id="form-status"
+                role="status"
+                aria-live="polite"
+                class="text-body opacity-0 transition-opacity duration-300"
+              ></p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+     FOOTER — node 704:826 · bg #010104 · border-t rgba(255,255,255,.2)
+     px100 pb80 · items-end gap100 · blurb 18/1.4/1.08px uppercase
+     menu gap24 · 18/500/1.8px uppercase opacity .7
+════════════════════════════════════════════════════════════════════ -->
+    <footer class="bg-coal pb-20 pt-12 md:pt-0">
+      <div
+        class="shell flex flex-col items-start gap-12 md:flex-row md:items-end md:gap-[clamp(3rem,5.21vw,6.25rem)]"
+      >
+        <div class="flex flex-col gap-6 md:flex-1">
+          <img
+            src="assets/logo.svg"
+            alt="Frost"
+            width="40"
+            height="40"
+            class="h-10 w-10"
+          />
+          <p
+            class="max-w-[38ch] text-body uppercase tracking-[0.06em] text-white"
+          >
+            Frost is a Manila-based<br />
+            User Interface Design Agency.<br />
+            We craft experience used by millions.
+          </p>
+        </div>
+
+        <nav aria-label="Footer">
+          <ul
+            class="flex flex-col gap-6 text-nav font-medium uppercase tracking-[0.1em] text-white"
+          >
+            <li>
+              <a
+                href="https://www.facebook.com/frostdesigngroup/"
+                target="_blank"
+                class="opacity-70 transition-opacity hover:opacity-100"
+                >Facebook</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.linkedin.com/company/frostdesigngroup/"
+                target="_blank"
+                class="opacity-70 transition-opacity hover:opacity-100"
+                >LinkedIn</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.instagram.com/frostdesignph/"
+                target="_blank"
+                class="opacity-70 transition-opacity hover:opacity-100"
+                >Instagram</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.frostdesigngroup.com/"
+                target="_blank"
+                class="opacity-70 transition-opacity hover:opacity-100"
+                >Frost Website</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://life.frostdesigngroup.com/"
+                target="_blank"
+                class="opacity-70 transition-opacity hover:opacity-100"
+                >Life at Frost</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
